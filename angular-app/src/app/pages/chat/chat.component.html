@@ -1,0 +1,599 @@
+<mat-toolbar *ngIf="!env.state.embeddedMode">
+  <span>Messages</span>
+</mat-toolbar>
+<div
+  *ngIf="chatService.getMessages()"
+  [ngClass]="{
+    'chat-container': !env.state.embeddedMode,
+    'chat-container-embedded': env.state.embeddedMode
+  }"
+>
+  <div>
+    <div class="chat-previous-button">
+      <button *ngIf="showHistoryButton()" mat-button (click)="showPrevious()">
+        Previous
+      </button>
+    </div>
+  </div>
+  <div *ngFor="let message of chatService.getMessages(); let i = index">
+    <div
+      *ngIf="!env.state.embeddedMode && message.type == 2 && message.timestamp"
+      class="chat-page-break-text"
+    >
+      <div class="chat-page-break">{{ getMessageTimestamp(message) }}</div>
+    </div>
+    <div
+      *ngIf="message.type == 1"
+      [ngClass]="{
+        'chat-watson-message': true,
+        'chat-message-history': message.history
+      }"
+    >
+      <table
+        class="chat-watson-message-pos"
+        [ngClass]="{ 'chat-assistant-disabled': isAssistantDisabled(message) }"
+      >
+        <tr>
+          <td class="chat-icon-container">
+            <img
+              [ngClass]="{
+                'chat-icon': !env.state.embeddedMode,
+                'chat-icon-embedded': env.state.embeddedMode
+              }"
+              [src]="getAssistantImage(message)"
+              [alt]="getAssistantName(message)"
+            />
+          </td>
+          <td>
+            <table class="chat-watson-message-pos-container">
+              <tr height="2">
+                <td></td>
+              </tr>
+              <tr>
+                <td valign="middle">
+                  <span
+                    matTooltip="Name of the assistant providing the response"
+                    matTooltipPosition="above"
+                    aria-label="Name of the assistant providing the response"
+                  >
+                    <span *ngIf="isAssistantDisabled(message)"
+                      ><i>Deactivated</i><br
+                    /></span>
+                    <b>{{ getAssistantName(message) }}</b>
+                  </span>
+                  <span
+                    *ngIf="CONFIG.showConfidence && message.confidence"
+                    matTooltip="Confidence in the response given"
+                    matTooltipPosition="above"
+                    aria-label="Confidence in the response given"
+                  >
+                    ( {{ round(message.confidence * 100) }}%
+                    <span
+                      *ngIf="message.confidence < 0.6"
+                      class="chat-watson-confidence"
+                    >
+                      <img
+                        class="chat-icon-mini chat-icon-mini-low"
+                        src="assets/images/star_border_black.png"
+                        alt="Confident"
+                      />
+                    </span>
+                    <span
+                      *ngIf="
+                        message.confidence >= 0.6 && message.confidence < 0.85
+                      "
+                      class="chat-watson-confidence"
+                    >
+                      <img
+                        class="chat-icon-mini chat-icon-mini-medium"
+                        src="assets/images/star_half_black.png"
+                        alt="Confident"
+                      />
+                    </span>
+                    <span
+                      *ngIf="message.confidence >= 0.85"
+                      class="chat-watson-confidence"
+                    >
+                      <img
+                        class="chat-icon-mini chat-icon-mini-high"
+                        src="assets/images/star_black.png"
+                        alt="Confident"
+                      />
+                    </span>
+                    )
+                  </span>
+                </td>
+              </tr>
+              <tr *ngIf="CONFIG.showTimestamps && message.timestamp">
+                <td>
+                  <span class="chat-message-timestamp">{{
+                    getMessageTimestamp(message)
+                  }}</span>
+                </td>
+              </tr>
+              <ng-container
+                *ngFor="let part of message.messages; let j = index"
+              >
+                <tr>
+                  <td
+                    height="30"
+                    *ngIf="part.message"
+                    [ngClass]="{
+                      'chat-watson-message-bubble': true,
+                      'chat-watson-message-normal-color':
+                        chatService.isMessagePartType(part, 0) ||
+                        chatService.isMessagePartType(part, 4),
+                      'chat-message-highlight-color': chatService.isMessagePartType(
+                        part,
+                        1
+                      ),
+                      'chat-message-comment-color': chatService.isMessagePartType(
+                        part,
+                        2
+                      ),
+                      'chat-message-error-color': chatService.isMessagePartType(
+                        part,
+                        3
+                      )
+                    }"
+                  >
+                    <mat-icon *ngIf="chatService.isMessagePartType(part, 4)"
+                      >notification_important</mat-icon
+                    ><span [innerHTML]="part.message | safeHtml"></span>
+                  </td>
+                </tr>
+                <tr *ngIf="part.submessages && part.submessages.length > 0">
+                  <td>
+                    <table>
+                      <mat-radio-group>
+                        <ng-container
+                          *ngFor="let submsg of part.submessages; let k = index"
+                        >
+                          <tr *ngIf="k == 0">
+                            <td
+                              (click)="part.expanded = !part.expanded"
+                              class="chat-icon-mini chat-icon-mini-collapsible"
+                            >
+                              <img
+                                *ngIf="
+                                  part.expanded && part.submessages.length > 1
+                                "
+                                class="chat-icon-mini"
+                                src="assets/images/collapse.png"
+                                alt="Collapse"
+                              />
+                              <img
+                                *ngIf="
+                                  !part.expanded && part.submessages.length > 1
+                                "
+                                class="chat-icon-mini"
+                                src="assets/images/expand.png"
+                                alt="Expand"
+                              />
+                              <span
+                                *ngIf="part.submessages.length <= 1"
+                                class="chat-icon-mini"
+                                >&nbsp;</span
+                              >
+                            </td>
+                            <td
+                              (click)="
+                                submsg.linkable && selectAnswer(submsg.message)
+                              "
+                              [ngClass]="{
+                                'chat-watson-message-bubble': true,
+                                'chat-watson-submessage-color': true
+                              }"
+                            >
+                              <span
+                                *ngIf="!submsg.value && !isVideo(submsg)"
+                                [innerHTML]="submsg.message | safeHtml"
+                              ></span>
+                              <mat-radio-button
+                                *ngIf="submsg.value"
+                                (click)="
+                                  i == chatService.getMessages().length - 1 &&
+                                    optionSelect(submsg.value)
+                                "
+                                [value]="submsg.value"
+                                [disabled]="
+                                  i != chatService.getMessages().length - 1
+                                "
+                              >
+                                <span
+                                  [innerHTML]="submsg.message | safeHtml"
+                                ></span>
+                              </mat-radio-button>
+                              <div *ngIf="submsg.image">
+                                <img
+                                  class="chat-image"
+                                  (click)="
+                                    openImageDialog(
+                                      $event,
+                                      submsg.image,
+                                      submsg.message
+                                    )
+                                  "
+                                  [src]="submsg.image"
+                                />
+                              </div>
+                              <div *ngIf="isVideo(submsg)">
+                                <video width="320" height="180" controls>
+                                  <source
+                                    [src]="
+                                      getServerUrl() +
+                                      '/video?name=' +
+                                      submsg.message
+                                    "
+                                    type="video/mp4"
+                                  />
+                                  Your browser does not support the video tag.
+                                </video>
+                              </div>
+                              <span *ngIf="submsg.metadata"
+                                >&nbsp;<img
+                                  *ngIf="!submsg.expanded"
+                                  (click)="submsg.expanded = !submsg.expanded"
+                                  class="chat-icon-mini"
+                                  src="assets/images/zoom-in.png"
+                                  alt="Zoom In" /><img
+                                  *ngIf="submsg.expanded"
+                                  (click)="submsg.expanded = !submsg.expanded"
+                                  class="chat-icon-mini"
+                                  src="assets/images/zoom-out.png"
+                                  alt="Zoom Out"
+                              /></span>
+                              <div
+                                *ngIf="submsg.metadata && submsg.expanded"
+                                style="padding-top: 5px"
+                              >
+                                <mat-accordion class="example-headers-align">
+                                  <mat-expansion-panel hideToggle>
+                                    <mat-expansion-panel-header>
+                                      <mat-panel-title
+                                        style="align-items: center"
+                                      >
+                                        {{ submsg.metadata.title }}
+                                      </mat-panel-title>
+                                      <mat-panel-description>
+                                        {{ submsg.metadata.desc }}
+                                      </mat-panel-description>
+                                    </mat-expansion-panel-header>
+                                    <ng-container
+                                      *ngFor="let key of submsg.metadata.keys"
+                                    >
+                                      <mat-form-field>
+                                        <input
+                                          matInput
+                                          [placeholder]="
+                                            submsg.metadata[key].title
+                                          "
+                                          [ngModel]="
+                                            submsg.metadata[key].value
+                                              ? submsg.metadata[key].value
+                                              : '.'
+                                          "
+                                          disabled
+                                        />
+                                      </mat-form-field>
+                                      <br />
+                                    </ng-container>
+                                  </mat-expansion-panel>
+                                </mat-accordion>
+                              </div>
+                            </td>
+                            <td
+                              *ngIf="submsg.linkable"
+                              style="cursor: default"
+                              (click)="selectAnswer(submsg.message)"
+                            >
+                              <button
+                                mat-icon-button
+                                [disabled]="chatService.isQuestionPending()"
+                              >
+                                <mat-icon>reply</mat-icon>
+                              </button>
+                            </td>
+                          </tr>
+                          <tr *ngIf="k > 0">
+                            <td *ngIf="part.expanded">
+                              <span class="chat-icon-mini">&nbsp;</span>
+                            </td>
+                            <td
+                              *ngIf="part.expanded"
+                              (click)="
+                                submsg.linkable && selectAnswer(submsg.message)
+                              "
+                              [ngClass]="{
+                                'chat-watson-message-bubble': true,
+                                'chat-watson-submessage-color': true
+                              }"
+                            >
+                              <span
+                                *ngIf="!submsg.value"
+                                [innerHTML]="submsg.message | safeHtml"
+                              ></span>
+                              <mat-radio-button
+                                *ngIf="submsg.value"
+                                (click)="
+                                  i == chatService.getMessages().length - 1 &&
+                                    optionSelect(submsg.value)
+                                "
+                                [value]="submsg.value"
+                                [disabled]="
+                                  i != chatService.getMessages().length - 1
+                                "
+                              >
+                                <span
+                                  [innerHTML]="submsg.message | safeHtml"
+                                ></span>
+                              </mat-radio-button>
+                              <span *ngIf="submsg.metadata"
+                                >&nbsp;<img
+                                  *ngIf="!submsg.expanded"
+                                  (click)="submsg.expanded = !submsg.expanded"
+                                  class="chat-icon-mini"
+                                  src="assets/images/zoom-in.png"
+                                  alt="Zoom In" /><img
+                                  *ngIf="submsg.expanded"
+                                  (click)="submsg.expanded = !submsg.expanded"
+                                  class="chat-icon-mini"
+                                  src="assets/images/zoom-out.png"
+                                  alt="Zoom Out"
+                              /></span>
+                              <div *ngIf="submsg.image">
+                                <img
+                                  class="chat-image"
+                                  (click)="
+                                    openImageDialog(
+                                      $event,
+                                      submsg.image,
+                                      submsg.message
+                                    )
+                                  "
+                                  [src]="submsg.image"
+                                />
+                              </div>
+                              <div
+                                *ngIf="submsg.metadata && submsg.expanded"
+                                style="padding-top: 5px"
+                              >
+                                <mat-accordion class="example-headers-align">
+                                  <mat-expansion-panel hideToggle>
+                                    <mat-expansion-panel-header>
+                                      <mat-panel-title
+                                        style="align-items: center"
+                                      >
+                                        {{ submsg.metadata.title }}
+                                      </mat-panel-title>
+                                      <mat-panel-description>
+                                        {{ submsg.metadata.desc }}
+                                      </mat-panel-description>
+                                    </mat-expansion-panel-header>
+                                    <ng-container
+                                      *ngFor="let key of submsg.metadata.keys"
+                                    >
+                                      <mat-form-field>
+                                        <input
+                                          matInput
+                                          [placeholder]="
+                                            submsg.metadata[key].title
+                                          "
+                                          [ngModel]="
+                                            submsg.metadata[key].value
+                                              ? submsg.metadata[key].value
+                                              : '.'
+                                          "
+                                          disabled
+                                        />
+                                      </mat-form-field>
+                                      <br />
+                                    </ng-container>
+                                  </mat-expansion-panel>
+                                </mat-accordion>
+                              </div>
+                            </td>
+                            <td
+                              *ngIf="submsg.linkable && part.expanded"
+                              style="cursor: default"
+                              (click)="selectAnswer(submsg.message)"
+                            >
+                              <button
+                                mat-icon-button
+                                [disabled]="chatService.isQuestionPending()"
+                              >
+                                <mat-icon>reply</mat-icon>
+                              </button>
+                            </td>
+                          </tr>
+                        </ng-container>
+                      </mat-radio-group>
+                    </table>
+                  </td>
+                </tr>
+              </ng-container>
+              <tr height="100%">
+                <td></td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    </div>
+    <div
+      *ngIf="message.type == 0"
+      [ngClass]="{ 'chat-message-history': message.history }"
+    >
+      <table class="chat-user-message-pos">
+        <tr>
+          <td>
+            <table class="chat-user-message-pos-container">
+              <tr height="10">
+                <td></td>
+              </tr>
+              <tr *ngIf="CONFIG.showTimestamps && message.timestamp">
+                <td>
+                  <span class="chat-message-timestamp">{{
+                    getMessageTimestamp(message)
+                  }}</span>
+                </td>
+              </tr>
+              <ng-container *ngFor="let part of message.messages">
+                <tr>
+                  <td
+                    height="30"
+                    [ngClass]="{
+                      'chat-user-message-bubble': true,
+                      'chat-user-message-normal-color':
+                        chatService.isMessagePartType(part, 0) ||
+                        chatService.isMessagePartType(part, 4),
+                      'chat-message-highlight-color': chatService.isMessagePartType(
+                        part,
+                        1
+                      ),
+                      'chat-message-comment-color': chatService.isMessagePartType(
+                        part,
+                        2
+                      ),
+                      'chat-message-error-color': chatService.isMessagePartType(
+                        part,
+                        3
+                      )
+                    }"
+                  >
+                    <mat-icon *ngIf="chatService.isMessagePartType(part, 4)"
+                      >notification_important</mat-icon
+                    ><span [innerHTML]="part.message | safeHtml"></span>
+                  </td>
+                </tr>
+                <tr *ngIf="part.submessages && part.submessages.length > 0">
+                  <td>
+                    <table>
+                      <ng-container
+                        *ngFor="let submsg of part.submessages; let k = index"
+                      >
+                        <tr *ngIf="k == 0">
+                          <td
+                            (click)="part.expanded = !part.expanded"
+                            class="chat-icon-mini chat-icon-mini-collapsible"
+                          >
+                            <img
+                              *ngIf="
+                                part.expanded && part.submessages.length > 1
+                              "
+                              class="chat-icon-mini"
+                              src="assets/images/collapse.png"
+                              alt="Collapse"
+                            />
+                            <img
+                              *ngIf="
+                                !part.expanded && part.submessages.length > 1
+                              "
+                              class="chat-icon-mini"
+                              src="assets/images/expand.png"
+                              alt="Expand"
+                            />
+                            <span
+                              *ngIf="part.submessages.length <= 1"
+                              class="chat-icon-mini"
+                              >&nbsp;</span
+                            >
+                          </td>
+                          <td
+                            [ngClass]="{
+                              'chat-user-message-bubble': true,
+                              'chat-user-submessage-color': true
+                            }"
+                          >
+                            <span
+                              [innerHTML]="submsg.message | safeHtml"
+                            ></span>
+                            <div *ngIf="submsg.image">
+                              <img
+                                class="chat-image"
+                                (click)="
+                                  openImageDialog(
+                                    $event,
+                                    submsg.image,
+                                    submsg.message
+                                  )
+                                "
+                                [src]="submsg.image"
+                              />
+                            </div>
+                          </td>
+                        </tr>
+                        <tr *ngIf="k > 0">
+                          <td *ngIf="part.expanded">
+                            <span class="chat-icon-mini">&nbsp;</span>
+                          </td>
+                          <td
+                            *ngIf="part.expanded"
+                            [ngClass]="{
+                              'chat-user-message-bubble': true,
+                              'chat-user-submessage-color': true
+                            }"
+                          >
+                            <span
+                              [innerHTML]="submsg.message | safeHtml"
+                            ></span>
+                            <div *ngIf="submsg.image">
+                              <img
+                                class="chat-image"
+                                (click)="
+                                  openImageDialog(
+                                    $event,
+                                    submsg.image,
+                                    submsg.message
+                                  )
+                                "
+                                [src]="submsg.image"
+                              />
+                            </div>
+                          </td>
+                        </tr>
+                      </ng-container>
+                    </table>
+                  </td>
+                </tr>
+              </ng-container>
+              <tr height="100%">
+                <td></td>
+              </tr>
+            </table>
+          </td>
+          <td class="chat-icon-container">
+            <img
+              [ngClass]="{
+                'chat-icon': !env.state.embeddedMode,
+                'chat-icon-embedded': env.state.embeddedMode
+              }"
+              *ngIf="!authService.isPhotoAvailable()"
+              src="assets/images/iconGuest.png"
+              alt="Photo"
+            />
+            <img
+              [ngClass]="{
+                'chat-icon': !env.state.embeddedMode,
+                'chat-icon-embedded': env.state.embeddedMode
+              }"
+              *ngIf="authService.isPhotoAvailable()"
+              [src]="authService.getPhoto()"
+              alt="Photo"
+            />
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  <div *ngIf="chatService.isQuestionPending()">
+    <br />
+    <table class="chat-progress-bar">
+      <tr>
+        <td align="right">
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>

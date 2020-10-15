@@ -1,0 +1,34 @@
+<mat-toolbar>
+  <span>Configuration</span>
+</mat-toolbar>
+<div class="config-container">
+  <div>
+    <p class="config-form-note" *ngIf="!authService.isAuthenticated()">
+      Note: You must be logged in to record history or save configuration settings.
+    </p>
+  </div>
+  <form [formGroup]="configForm">
+    <div class="config-form-control">
+      <input formControlName="introduction" type="checkbox" [attr.disabled]="!authService.isAuthenticated()?'':null">
+      <label>
+        Show Introduction
+      </label>
+    </div>
+    <div class="config-form-control">
+      <input formControlName="confidence" type="checkbox" [attr.disabled]="!authService.isAuthenticated()?'':null">
+      <label>
+        Show Confidence of Answer
+      </label>
+    </div>
+    <div class="config-form-control">
+      <input formControlName="timestamps" type="checkbox" [attr.disabled]="!authService.isAuthenticated()?'':null">
+      <label>
+        Show Message Timestamps
+      </label>
+    </div>
+  </form>
+  <br/>
+  <div class="config-form-control">
+    <button mat-stroked-button (click)="openYesNoDialog()">Reset All</button>
+  </div>
+</div>

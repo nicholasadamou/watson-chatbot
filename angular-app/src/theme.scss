@@ -1,0 +1,44 @@
+@import "~@angular/material/theming";
+@include mat-core();
+
+$ibm-brand: (
+  50: #e9edf6,
+  100: #c8d3e7,
+  200: #a3b5d8,
+  300: #7e97c8,
+  400: #6281bc,
+  500: #466bb0,
+  600: #3f63a9,
+  700: #3758a0,
+  800: #2f4e97,
+  900: #203c87,
+  A100: #c3d2ff,
+  A200: #90acff,
+  A400: #5d85ff,
+  A700: #4472ff,
+  contrast: (
+    50: $black-87-opacity,
+    100: $black-87-opacity,
+    200: $black-87-opacity,
+    300: $black-87-opacity,
+    400: $black-87-opacity,
+    500: white,
+    600: white,
+    700: white,
+    800: $white-87-opacity,
+    900: $white-87-opacity,
+    A100: $black-87-opacity,
+    A200: white,
+    A400: white,
+    A700: white,
+  )
+);
+
+$my-app-primary: mat-palette($ibm-brand);
+$my-app-accent:  mat-palette($mat-blue-grey);
+/*$my-app-warn:    mat-palette($mat-deep-orange);*/
+
+/*$my-app-theme: mat-light-theme($my-app-primary, $my-app-accent, $my-app-warn);*/
+$my-app-theme: mat-light-theme($my-app-primary, $my-app-accent);
+
+@include angular-material-theme($my-app-theme);

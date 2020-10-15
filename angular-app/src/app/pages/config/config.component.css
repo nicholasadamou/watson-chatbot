@@ -1,0 +1,12 @@
+.config-container {
+  margin: 30px 20px 30px 20px;
+}
+
+.config-form-control {
+  padding: 5px;
+}
+
+.config-form-note {
+  font-style: italic;
+  color: #949394;
+}

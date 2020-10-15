@@ -1,0 +1,12 @@
+version: "2"
+
+services:
+  watson-chatbot:
+    image: nicholasadamou/watson-chatbot:latest
+    container_name: watson-chatbot
+    env_file:
+      - .env
+    ports:
+      - 6001:6001
+    networks:
+      - default

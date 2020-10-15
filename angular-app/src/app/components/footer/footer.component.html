@@ -1,0 +1,10 @@
+<footer #theFooter class="page-footer" *ngIf="state.page == 'chat'">
+  <form class="chat-form" [formGroup]="chatForm" (ngSubmit)="onSubmit()">
+    <mat-form-field class="chat-field">
+      <input matInput placeholder="Your question or command" formControlName="question">
+    </mat-form-field>
+    &nbsp;
+    <button *ngIf="!env.state.embeddedMode" color="primary" mat-flat-button [disabled]="env.error || !f.question.value || chatForm.invalid || chatService.isQuestionPending() || state.page != 'chat'">Send</button>
+    <button *ngIf="authService.isAuthenticated()" style="margin-left: 2px" mat-icon-button [disabled]="env.error || chatService.isQuestionPending() || state.page != 'chat'" (click)="openQuesionSheet()"><mat-icon>reply_all</mat-icon></button>
+  </form>
+</footer>

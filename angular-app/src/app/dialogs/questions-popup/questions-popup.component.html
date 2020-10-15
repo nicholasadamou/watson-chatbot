@@ -1,0 +1,6 @@
+<h3>History</h3>
+<mat-nav-list>
+  <a *ngFor="let q of getQuestions()" mat-list-item (click)="openLink($event, q)">
+    <span mat-line>{{ q }}</span>
+  </a>
+</mat-nav-list>

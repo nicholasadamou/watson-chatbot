@@ -1,0 +1,8 @@
+.dialog-container {
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
+}
+
+.dialog-button {
+  display: flex;
+  justify-content: center;
+}
