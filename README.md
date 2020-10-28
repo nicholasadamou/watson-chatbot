@@ -147,16 +147,6 @@ const userInfo = {};
 - Server ->
   - Reads, decodes, and verifies the JWT Token received from the SSO authentication flow.
   - If authentication was unsuccessful, then login failed; otherwise, server sends back the user details and client saves the information locally.
-    - Client -> '/api/\*\*'
-      - Check for 'Chat-Session-ID' response header
-        - If Client unauth, Chat-Session-ID = undefined
-          - Do nothing
-        - If Client auth'd, Chat-Session-ID = undefined
-          - Set client unauth (delete local user info)
-        - If Client unauth, Chat-Session-ID = defined
-          - Go to Client -> '/api/user/info' action
-        - If Client auth'd, Chat-Session-ID = defined
-          - Do nothing
 
 **Logout Flow**:
 
