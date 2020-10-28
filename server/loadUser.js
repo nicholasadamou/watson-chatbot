@@ -20,7 +20,7 @@ exports.loadUser = (C, token, callback) => {
 				role: jwt_decoded.role
 			}
 
-			L.info(`User '${user.email}' information loaded using JWT Token Method:`, user);
+			L.info(`User '${user.email}' information loaded using JWT Token Method: ${user}`);
 
 			callback(user);
 		} catch (error) {
