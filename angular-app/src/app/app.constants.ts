@@ -167,14 +167,8 @@ export const MESSAGE_LOGIN_NOT_IDENTIFIED = (
   return msg;
 };
 
-export const MESSAGE_ENTER_QUESTION = (isAuthenticated: boolean): Message => {
+export const MESSAGE_ENTER_QUESTION = (): Message => {
   const msgs: MessagePart[] = [];
-  if (!isAuthenticated) {
-    msgs.push({
-      type: MessagePartType.HIGHLIGHT,
-      message: 'Type <i>"login"</i> to authenticate.',
-    });
-  }
 
   msgs.push({
     type: MessagePartType.NORMAL,
@@ -209,16 +203,6 @@ export const MESSAGE_UNABLE_TO_COMMUNICATE = (
       },
     ],
   };
-};
-
-export const MESSAGE_SERVER_LOGGED_OUT: Message = {
-  type: MessageType.WATSON,
-  messages: [
-    {
-      type: MessagePartType.HIGHLIGHT,
-      message: "You have been logged out.",
-    },
-  ],
 };
 
 ////////////////////////////////////////////////////////////////////////////////

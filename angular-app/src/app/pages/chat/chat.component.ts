@@ -160,10 +160,7 @@ export class ChatComponent implements OnInit {
 
   showStartMessages(): void {
     if (!this.env.state.embeddedMode) {
-      this.chatService.addMessage(
-        MESSAGE_ENTER_QUESTION(this.authService.isAuthenticated()),
-        true
-      );
+      this.chatService.addMessage(MESSAGE_ENTER_QUESTION(), true);
 
       if (this.CHAT.startStatements && this.CHAT.startStatements.length > 0) {
         let methods = new Array(this.CHAT.startStatements.length);

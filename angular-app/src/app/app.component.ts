@@ -5,10 +5,8 @@ import { AuthenticationService } from "./services/authentication.service";
 import { ChatService } from "./services/chat.service";
 import { NotifyService } from "./services/notify.service";
 import { MatDialog } from "@angular/material/dialog";
-import { LogoutDialogComponent } from "./dialogs/logout-dialog/logout-dialog.component";
 import { Utils } from "./utils";
 import { environment } from "../environments/environment";
-import { MESSAGE_SERVER_LOGGED_OUT } from "./app.constants";
 
 @Component({
   selector: "app-root",
@@ -74,13 +72,10 @@ export class AppComponent implements OnInit {
     this.authService.loadPhoto();
 
     // Perform login flow on initial opening of the chat-bot if not authenticated.
-    // const isAuthenticated: boolean = this.authService.isAuthenticated();
-    // if (
-    //   !isAuthenticated &&
-    //   !new URLSearchParams(window.location.search).has("login")
-    // ) {
-    //   this.doLogin();
-    // }
+    const isAuthenticated: boolean = this.authService.isAuthenticated();
+    if (!isAuthenticated) {
+      this.doLogin();
+    }
 
     this.route.queryParams.subscribe((params) => {
       if (params["mode"] && params["mode"] == "embedded") {
@@ -134,21 +129,8 @@ export class AppComponent implements OnInit {
     this.env.state.page = page;
   }
 
-  openLogoutDialog(): void {
-    const dialogRef = this.logoutDialog.open(LogoutDialogComponent, {
-      data: { canceled: true },
-    });
-
-    dialogRef.afterClosed().subscribe((accepted) => {
-      if (accepted) {
-        this.chatService.addMessage(MESSAGE_SERVER_LOGGED_OUT);
-        this.authService.logout();
-      }
-    });
-  }
-
   showLogin(): boolean {
-    return !this.authService.getEmail();
+    return !this.authService.getEmail() && !this.env.server.isLocal;
   }
 
   doLogin(): void {

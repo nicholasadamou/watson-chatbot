@@ -11,7 +11,6 @@ import {
   Message,
   MESSAGE_DO_NOT_UNDERSTAND,
   MESSAGE_UNABLE_TO_COMMUNICATE,
-  MESSAGE_SERVER_LOGGED_OUT,
 } from "../app.constants";
 import { AppConstants } from "../app.constants";
 import { Utils } from "../utils";
@@ -40,13 +39,7 @@ export class ChatService {
     private http: HttpClient,
     private authService: AuthenticationService,
     private notify: NotifyService
-  ) {
-    this.notify.subscribeToLogout(() => {
-      this.clearHistory();
-      this.clearMessages();
-      this.clearApiSession();
-    });
-  }
+  ) {}
 
   startNewHistory(): void {
     if (!this.authService.isAuthenticated()) return;
@@ -164,11 +157,6 @@ export class ChatService {
 
       if (question === "[Object object]" || typeof question !== "string") {
         return;
-      } else if (
-        question === "login" ||
-        question === "logout"
-      ) {
-        return;
       }
 
       if (!hideQuestion) {
@@ -208,15 +196,6 @@ export class ChatService {
             //const headers: HttpHeaders = resp.headers;
 
             const data = resp.body ? resp.body : {};
-
-            // NOTE: WORK AROUND DUE TO RESPONSE HEADERS NOT WORKING.
-            if (!data.chatSessionId) {
-              // Since no session, server has logged user out.  Do same on client.
-              if (this.authService.isAuthenticated()) {
-                this.authService.logout();
-                this.addMessage(MESSAGE_SERVER_LOGGED_OUT, skipHistory);
-              }
-            }
 
             const response: any[] = data.processedResponse;
 

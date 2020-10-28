@@ -1,4 +1,4 @@
-module.exports = function(C, apiRoutes, ensureAuthenticated, CONFIG_KEY) {
+module.exports = function(C, apiRoutes, CONFIG_KEY) {
 
   const SESSION = require('../session');
   const UTILS = require('../utils');
@@ -22,11 +22,10 @@ module.exports = function(C, apiRoutes, ensureAuthenticated, CONFIG_KEY) {
 
   //////////////////////////////////////////////////////////////////////////////
 
-  routeConfig[CONFIG_KEY].user = UTILS.appendConfig(routeConfig[CONFIG_KEY].user = {}, require('./user')(C, apiRoutes, ensureAuthenticated));
-  // routeConfig[CONFIG_KEY].apiCount = UTILS.appendConfig(routeConfig[CONFIG_KEY].apiCount = {}, require('./examples/apiCount')(C, apiRoutes /*, ensureAuthenticated*/));
+  // routeConfig[CONFIG_KEY].apiCount = UTILS.appendConfig(routeConfig[CONFIG_KEY].apiCount = {}, require('./examples/apiCount')(C, apiRoutes));
 
   // Chat API does not require authentication because we want anonymous access.
-  routeConfig[CONFIG_KEY].chat = UTILS.appendConfig(routeConfig[CONFIG_KEY].chat = {}, require('./chat')(C, apiRoutes /*, ensureAuthenticated*/));
+  routeConfig[CONFIG_KEY].chat = UTILS.appendConfig(routeConfig[CONFIG_KEY].chat = {}, require('./chat')(C, apiRoutes));
 
   //////////////////////////////////////////////////////////////////////////////
 

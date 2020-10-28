@@ -8,7 +8,7 @@
 
 ⚠️ Prior to installing and configuring the tooling on our system, let's first set-up our GitHub SSH keys for IBM.
 
-- Please follow the guide found [here](https://docs.github.com/en/enterprise/2.21/user/github/authenticating-to-github/adding-a-new-ssh-key-to-your-github-account) to configure your GitHub Enterprise account to use your new (or existing) SSH key.
+- Please follow the guide found [here](https://docs.github.com/en/enterprise/2.21/user/github/authenticating-to-github/adding-a-new-ssh-key-to-your-github-account) to configure your GitHub account to use your new (or existing) SSH key.
 
 ### Configuration
 
@@ -16,7 +16,7 @@ Please edit [server/config.js](server/config.js) for local development.
 
 ### Set Up
 
-**Clone** the [chatbot](https://github.ibm.com/nicholasadamou/watson-chatbot) repository:
+**Clone** the [chatbot](https://github.com/nicholasadamou/watson-chatbot) repository:
 
 ```bash
 git clone git@github.com:nicholasadamou/watson-chatbot.git
@@ -26,6 +26,7 @@ git clone git@github.com:nicholasadamou/watson-chatbot.git
 
 ```text
 CHAT_KEY=<The key provided to you for the Watson Assistant instance you set up>
+WATSON_ASSISTANT_ID=<The ID related to the Watson Assistant assistant within the Watson instance>
 JWT_KEY=<The JWT key used in part of JWT token verification>
 JWT_SECRET=<The JWT secret used in part of JWT token verification>
 ENV=<Which "env" to load configuration for [dev, test, prod]>
@@ -104,7 +105,7 @@ In order to access the front-end UI using this script, you need to visit: [http:
 
 This application assumes that the authentication flow that the parent web application (e.g. [test/](test/)) is using is **SSO** with _JWT_.
 
-The authentication flow starts with the user typing `login` into the front-end of the chatbot. The chatbot back-end server obtains the encoded JWT token from the domain cookie which was generated during the SSO authentication flow from the parent web application. It then reads, decodes, and verifies that JWT Token and if successful, the chatbot back-end server ([server/server.js](server/server.js)) will redirect the front-end ([angular-app](angular-app)) to `$PROTOCOL://$HOST:\$PORT?login=true` indicating successful authentication. The front-end will then utilize [auth.guard](angular-app/src/guards/auth.guard.ts) and make a request for 1) the decoded user stored on the back-end server and 2) the avatar of that user which will then be displayed on the front-end UI.
+The authentication flow starts when the user hits the chatbot itself. If the user is not currently authenticated, then it will make a request to `/chatbot/auth/login`. The chatbot back-end server obtains the encoded JWT token from the domain cookie which was generated during the SSO authentication flow from the parent web application. It then reads, decodes, and verifies that JWT Token and if successful, the chatbot back-end server ([server/server.js](server/server.js)) will send back a JSON object back to the client containing the user that was authenticated and whether or not the authentication was successful. The front-end will then store that user in local storage and make a request for the user's avatar using the email address contained within the user object which will then be displayed on the front-end UI.
 
 **Roles**:
 
@@ -135,6 +136,7 @@ There are 2 modes authentication can run in:
 Request for 'user/info' returns (if the JWT token is not verified or is invalid):
 
 ```js
+const authenticated = false;
 const userInfo = {};
 ```
 
@@ -142,14 +144,9 @@ const userInfo = {};
 
 - Client -> '/isLocal' to determine if running locally.
 - Client -> '/auth/login' Redirects to server for authentication.
-  - Passes PORT/PROTOCOL in use by client so redirect knows where to call back.
 - Server ->
-  - Reads, decodes, and verifies the JWT Token received from the authentication flow.
-  - Redirects client to $PROTOCOL://$HOST:\$PORT?login=false
-    - This state occurs if the decoded JWT Token has expired or is invalid. The system views the user as anonymous.
-  - Redirects client to $PROTOCOL://$HOST:\$PORT?login=true
-    - If there is the query parameter (checked in AuthGuard), Client -> '/api/user/info'
-      - If nothing returned, then login failed; otherwise, save information locally.
+  - Reads, decodes, and verifies the JWT Token received from the SSO authentication flow.
+  - If authentication was unsuccessful, then login failed; otherwise, server sends back the user details and client saves the information locally.
     - Client -> '/api/\*\*'
       - Check for 'Chat-Session-ID' response header
         - If Client unauth, Chat-Session-ID = undefined
@@ -170,7 +167,5 @@ const userInfo = {};
 
 There are various commands available to the user.
 
-1. `login`: Will attempt to impersonate the user (_if not currently logged in_).
-2. `logout`: Will logout the currently authenticated user from the chatbot if the user isn't already authenticated.
-3. `help`: Will list out the assistants that are there to help you as well as launch the commands found within the [server/config.js](server/config.js) under `services.chat.startStatements`.
-4. `assistants`, `chatbot`, `assistants`, `chatbots`: Will list out the assistants that are there to help you.
+1. `help`: Will list out the assistants that are there to help you as well as launch the commands found within the [server/config.js](server/cnfig.js) under `services.chat.startStatements`.
+2. `assistants`, `chatbot`, `assistants`, `chatbots`: Will list out the assistants that are there to help you.

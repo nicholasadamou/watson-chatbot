@@ -15,30 +15,12 @@ export class AuthenticationService {
   login(): void {
     let url = Utils.getServerUrl() + "/auth/login";
 
-    // Must pass the port / protocol so that the sever knows where to callback to client via redirect
-    url = `${url}?port=${location.port}`;
-    url = `${url}&protocol=${location.protocol.replace(":", "")}`;
-
-    window.location.href = url;
-  }
-
-  logout(): void {
-    // Logout from the server.
-    this.http.get<any>(`${Utils.getServerUrl()}/auth/logout`).subscribe(
-      (resp) => {
-        console.log(resp);
-      },
-      (/*error*/) => {
-        // DO SOMETHING ON FAILURE.
+    this.http.get<any>(`${url}`).subscribe((result) => {
+      if (result.authenticated) {
+        this.saveUser(result.userInfo);
+        this.loadPhoto();
       }
-    );
-
-    this.notify.logout();
-
-    localStorage.removeItem(AppConstants.USER);
-    localStorage.removeItem(AppConstants.QUESTIONS);
-    environment.state.chatInitialized = false;
-    return;
+    });
   }
 
   saveUser(user: User): void {
@@ -66,7 +48,7 @@ export class AuthenticationService {
   }
 
   isPhotoAvailable(): boolean {
-    return this.isAuthenticated() && this.getUser().photo != undefined;
+    return this.isAuthenticated() && this.getUser().photo !== undefined;
   }
 
   getPhoto(): any {
@@ -80,9 +62,12 @@ export class AuthenticationService {
         const email: string = user.email;
         if (user.email) {
           this.http
-            .get(`${Utils.getServerUrl()}/api/user/photo?email=${email}`, {
-              responseType: "blob",
-            })
+            .get(
+              `https://w3-services1.w3-969.ibm.com/myw3/unified-profile-photo/v1/image/${email}`,
+              {
+                responseType: "blob",
+              }
+            )
             .subscribe((image: Blob) => {
               if (image && image.size > 0) {
                 const reader = new FileReader();

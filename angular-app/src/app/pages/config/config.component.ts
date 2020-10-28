@@ -1,19 +1,18 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { ConfigService } from '../../services/config.service';
-import { AuthenticationService } from '../../services/authentication.service';
-import { ChatService } from '../../services/chat.service';
-import { MatDialog } from '@angular/material/dialog';
-import { YesNoDialogComponent } from '../../dialogs/yes-no-dialog/yes-no-dialog.component';
-import { environment } from '../../../environments/environment';
+import { Component, OnInit } from "@angular/core";
+import { FormBuilder, FormGroup } from "@angular/forms";
+import { ConfigService } from "../../services/config.service";
+import { AuthenticationService } from "../../services/authentication.service";
+import { ChatService } from "../../services/chat.service";
+import { MatDialog } from "@angular/material/dialog";
+import { YesNoDialogComponent } from "../../dialogs/yes-no-dialog/yes-no-dialog.component";
+import { environment } from "../../../environments/environment";
 
 @Component({
-  selector: 'app-config',
-  templateUrl: './config.component.html',
-  styleUrls: ['./config.component.css']
+  selector: "app-config",
+  templateUrl: "./config.component.html",
+  styleUrls: ["./config.component.css"],
 })
 export class ConfigComponent implements OnInit {
-
   configForm: FormGroup;
   env: any;
 
@@ -23,18 +22,15 @@ export class ConfigComponent implements OnInit {
     private chatService: ChatService,
     public authService: AuthenticationService,
     public yesNoDialog: MatDialog
-
   ) {
-
     this.env = environment;
 
     this.configForm = this.formBuilder.group({
-      confidence: [{ id: 1, name: 'Show Confidence' }],
-      introduction: [{ id: 2, name: 'Show Introduction' }],
-      timestamps: [{ id: 3, name: 'Show Message Timestamps' }]
+      confidence: [{ id: 1, name: "Show Confidence" }],
+      introduction: [{ id: 2, name: "Show Introduction" }],
+      timestamps: [{ id: 3, name: "Show Message Timestamps" }],
     });
-    this.configForm.valueChanges.subscribe(val => {
-
+    this.configForm.valueChanges.subscribe((val) => {
       let v1: boolean = val.confidence ? true : false;
       let v2: boolean = val.introduction ? true : false;
       let v3: boolean = val.timestamps ? true : false;
@@ -50,7 +46,6 @@ export class ConfigComponent implements OnInit {
   }
 
   setValues(): void {
-
     let v1: boolean = environment.config.showConfidence;
     let v2: boolean = environment.config.showIntroduction;
     let v3: boolean = environment.config.showTimestamps;
@@ -60,23 +55,21 @@ export class ConfigComponent implements OnInit {
     this.configForm.get("timestamps").setValue(v3);
   }
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 
   openYesNoDialog(): void {
-
     const dialogRef = this.yesNoDialog.open(YesNoDialogComponent, {
       data: {
-        title: 'Reset all',
-        description: 'This will clear all your user data and history, and reset your configuration settings.  Do you want to continue?',
-        action: 'Yes',
-        canceled: true
-      }
+        title: "Reset all",
+        description:
+          "This will clear all your user data and history, and reset your configuration settings.  Do you want to continue?",
+        action: "Yes",
+        canceled: true,
+      },
     });
 
-    dialogRef.afterClosed().subscribe(yes => {
+    dialogRef.afterClosed().subscribe((yes) => {
       if (yes) {
-        this.authService.logout();
         this.chatService.clearHistory();
         this.chatService.clearMessages();
         this.chatService.clearQuestions();

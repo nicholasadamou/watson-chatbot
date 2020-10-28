@@ -1,42 +1,37 @@
-exports.loadUser = (C, callback) => {
+exports.loadUser = (C, token, callback) => {
 
 	const L = C.LOG;
 
-	const store = require('store');
-	const token = store.get('authorization_token');
-	if (token === undefined) {
-		L.warn(`Unable to load authorization token`);
+	if (token) {
+		L.info(`authorization_token loaded ${token}`);
+		L.info(`Loading user information using JWT Token Method.`);
 
-		callback(undefined);
+		try {
+			const jwt = require('jsonwebtoken');
 
-		return;
-	}
-	L.info(`authorization_token loaded ${token}`)
+			const SECRET_KEY = `${process.env.JWT_KEY}:${process.env.JWT_SECRET}`;
+			let secret = Buffer.from(SECRET_KEY).toString('base64');
 
-	L.info(`Loading user information using JWT Token Method.`);
+			const jwt_decoded = jwt.verify(token, secret, { algorithms: ['HS256'] });
+			L.info(`JWT Token decoded ${JSON.stringify(jwt_decoded)}`);
 
-	try {
+			const user = {
+				email: jwt_decoded.emailAddress,
+				role: jwt_decoded.role
+			}
 
-		const jwt = require('jsonwebtoken');
+			L.info(`User '${user.email}' information loaded using JWT Token Method:`, user);
 
-		const SECRET_KEY = `${process.env.JWT_KEY}:${process.env.JWT_SECRET}`;
-		let secret = Buffer.from(SECRET_KEY).toString('base64');
+			callback(user);
+		} catch (error) {
+			L.error(error);
 
-		const jwt_decoded = jwt.verify(token, secret, { algorithms: ['HS256'] });
-		L.info(`JWT Token decoded ${JSON.stringify(jwt_decoded)}`);
+			L.error(`Unable to load user due to err: ${error}`);
 
-		const user = {
-			email: jwt_decoded.emailAddress,
-			role: jwt_decoded.role
+			callback(undefined);
 		}
-
-		L.info(`User '${user.email}' information loaded using JWT Token Method:`, user);
-
-		callback(user);
-	} catch (error) {
-		L.error(error);
-
-		L.error(`Unable to load user due to err: `, error);
+	} else {
+		L.error(`Unable to load user. The JWT token is undefined.`);
 
 		callback(undefined);
 	}

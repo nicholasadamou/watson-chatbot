@@ -23,7 +23,7 @@ module.exports = (C) => {
 			},
 			chat: {
 				assistants: [{
-					id: 'fd2f2962-7ea1-4585-a497-24e2897db6c1',
+					id: process.env.WATSON_ASSISTANT_ID,
 					name: 'Watson Assistant',
 					description: 'I am the default Assistant to help direct your questions to other assistants.',
 					image: 'iconWatson.png',
@@ -51,10 +51,6 @@ module.exports = (C) => {
 				],
 				helpHtml: '<p></p>',
 				errorMessage: 'Sorry, I am having difficulty connecting to Watson Assistant service on IBM Cloud. Please try again later.',
-				loginErrorMessage: {
-					message: 'Welcome <em>Anonymous</em> user!',
-					submessage: `It appears you either do not have access or you have not logged in. Please to attempt to login again.`
-				},
 			}
 		}
 	})

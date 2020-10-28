@@ -1,4 +1,4 @@
-module.exports = function(C, app, apiRoutes, ensureAuthenticated) {
+module.exports = function(C, app, apiRoutes) {
 
   const L = C.LOG;
 
@@ -36,8 +36,8 @@ module.exports = function(C, app, apiRoutes, ensureAuthenticated) {
     }}
   }
 
-  apiRoutes.get('/job', ensureAuthenticated, (req, res) => { RUN(req, res) });
-  apiRoutes.post('/job', ensureAuthenticated, (req, res) => { RUN(req, res) });
+  apiRoutes.get('/job', (req, res) => { RUN(req, res) });
+  apiRoutes.post('/job', (req, res) => { RUN(req, res) });
 
   //////////////////////////////////////////////////////////////////////////////
 

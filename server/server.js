@@ -129,29 +129,27 @@ app.use(cookieParser());
 // NOTES: On how Authentication works for the Chatbot.
 
 // Roles:
-//    0 : No-role (no-access e.g. Anonymous)
+//    0 : No-role (no-access)
 //        Occurs if JWT token is not verified, is invalid, or does not exist.
 //    X : Role determined by user login
-// 				Occurs if JWT token is verified, not invalid, and does exist.
+// 		  Occurs if JWT token is verified, not invalid, and does exist.
 
 // Authentication States:
-//    1. Anonymous
+//    1. No-role
 //      Client uses no-role, limited access.
 //    2. Authenticated
 //      Client uses role determined by the verified and decoded JWT Token obtained from the domain cookie.
 
-// Request for 'user/info' returns (if JWT token is not verified or is invalid):
-//    const userInfo = {}
+// Request for '/auth/login' returns (if JWT token is not verified or is invalid):
+//	  authenticated = false;
+//    const userInfo = {};
 
 // Login Flow:
 //    Client -> '/isLocal' to determine if running locally.
 //    Client -> '/auth/login' Redirects to server for authentication.
-//    	- Passes PORT in use by client so redirect knows where to call back
 //    Server ->
 //		Reads, decodes, and verifies the JWT Token received from the SSO authentication flow.
-//      Redirects client to <C.PROTOCOL>://<C.HOST>:<C.PORT>?login=true
-//    If there is the query parameter (checked in AuthGuard), Client -> '/api/user/info'
-//      If nothing returned, then login failed; otherwise, save information locally.
+//    	If authentication was unsuccessful, then login failed; otherwise, server sends back the user details and client saves the information locally.
 //    Client -> '/api/**'
 //      Check for 'Chat-Session-ID' response header
 //        If Client unauth, Chat-Session-ID = undefined
@@ -169,61 +167,6 @@ app.use(cookieParser());
 
 ///////////////////////////////////////////////////////////////////////////////
 
-const ensureAuthenticated = (req, res, next) => {
-	if (C.LOCAL) {
-		// No need to check authentication when running locally.
-		return next();
-	} else {
-		req.session.originalUrl = req.originalUrl;
-
-		// Must pass the port so it knows where to callback to client via redirect.
-		const port = req.query.port;
-
-		// Must pass the protocol so it knows what type of security to use in the redirect.
-		const protocol = req.query.protocol;
-
-		URL = `/chatbot/auth/login`
-
-		if (port === undefined) {
-			URL = `${URL}?protocol=${protocol}`
-		} else {
-			URL = `${URL}?port=${port}&protocol=${protocol}`
-		}
-
-		const user = store.get('user');
-
-		if (user === undefined) {
-			L.info(`ensureAuthenticated() => ${URL}`)
-
-			res.redirect(`${URL}`);
-		}
-
-		try {
-			const jwt = require('jsonwebtoken');
-
-			const token = store.get('authorization_token');
-
-			const SECRET_KEY = `${process.env.JWT_KEY}:${process.env.JWT_SECRET}`;
-			let secret = Buffer.from(SECRET_KEY).toString('base64');
-
-			const jwt_decoded = jwt.verify(token, secret, {algorithms: ['HS256']});
-			L.info(`JWT Token decoded ${JSON.stringify(jwt_decoded)}`);
-
-			L.info(`ensureAuthenticated() => ${req.originalUrl}`)
-
-			return next();
-		} catch (error) {
-			L.error(error);
-
-			store.clearAll();
-
-			L.info(`ensureAuthenticated() => ${URL}`)
-
-			res.redirect(`${URL}`);
-		}
-	}
-}
-
 // There are 2 modes authentication can run in:
 //   1. Local. No sessions because of cross site cookie issue; uses fake single session.
 //   2. Cloud with sessions.
@@ -231,74 +174,26 @@ const ensureAuthenticated = (req, res, next) => {
 app.get('/chatbot/auth/login', (req, res) => {
 	const title = '/chatbot/auth/login';
 
-	if (req.query.port !== undefined) {
-		L.verbose(`${title}/?port=${req.query.port}&protocol=${req.query.protocol}: Entered.`);
-	} else {
-		L.verbose(`${title}/?protocol=${req.query.protocol}: Entered.`);
-	}
-
-	// Must pass the port so it knows where to callback to client via redirect.
-	const port = req.query.port;
-
-	// Must pass the protocol so it knows what type of security to use in the redirect.
-	const protocol = req.query.protocol;
-
-	const session = SESSION.get(C, req);
-	let redirect_url = '/chatbot/';
-
-	let URL = '';
-
-	if (C.HOST.includes("http") || C.HOST.includes("https")) {
-		URL = `${C.HOST}`;
-	} else {
-		URL = `${protocol}://${C.HOST}`;
-	}
-
-	if (port === undefined) {
-		URL = `${URL}${redirect_url}`
-	} else {
-		URL = `${URL}:${port}${redirect_url}`;
-	}
-
-	UTILS.loadCookie(L, store, req);
+	const token = UTILS.getToken(L, req);
 
 	if (session) {
-
-		LOAD_USER.loadUser(C, user => {
+		LOAD_USER.loadUser(C, token, user => {
 			if (C.LOCAL) C.LOCAL_SESSION_ID = uuid();
 
 			if (user) {
-				store.set('user', user);
-
 				L.verbose(`${title}: Authenticating session with user '${user.email}' and role '${user.role}'.`);
 
-				L.info(`${title}: => ${URL}?login=true`)
-
-				res.redirect(`${URL}?login=true`)
+				res.json({ok: true, authenticated: true, userInfo: user});
 			} else {
-				L.info(`${title}: => ${URL}?login=false`)
-
-				res.redirect(`${URL}?login=false`)
+				res.json({ok: true, authenticated: false, userInfo: {}});
 			}
 		});
 	}
 	else {
-
 		L.verbose(`${title}: Unable to authenticate with session.`);
 
-		L.info(`${title}: => ${URL}?login=false`)
-
-		res.redirect(`${URL}?login=false`)
+		res.json({ok: true, authenticated: false, userInfo: {}});
 	}
-});
-
-app.get('/chatbot/auth/logout', (req, res) => {
-	L.verbose(`/chatbot/auth/logout: Entered.`);
-
-	SESSION.destroy(C, req);
-	if (store.get('user') !== undefined) store.remove('user');
-
-	res.json({ok: true, message: `Logout successful.`});
 });
 
 
@@ -310,19 +205,19 @@ const registerRoutes = callback => {
 
 	// For debugging only
 	if (C.ENABLE_DEBUG) {
-		app.get('/chatbot/process_env', ensureAuthenticated, (req, res) => {
+		app.get('/chatbot/process_env', (req, res) => {
 			L.verbose(`/chatbot/process_env: Entered.`);
 
 			res.json({ok: true, env: process.env});
 		});
 
-		app.get('/chatbot/isLocal', ensureAuthenticated, (req, res) => {
+		app.get('/chatbot/isLocal', (req, res) => {
 			L.verbose(`/chatbot/isLocal: Entered.`);
 
 			res.json({ok: true, isLocal: C.LOCAL});
 		});
 
-		app.get('/chatbot/config', ensureAuthenticated, (req, res) => {
+		app.get('/chatbot/config', (req, res) => {
 			L.verbose(`/chatbot/config: Entered.`);
 
 			res.json({ok: true, config: C.CONFIG});
@@ -409,7 +304,7 @@ const apiRoutes = express.Router();
 
 // Register API Routes.
 registerRoutes(() => {
-	const routes = require('./routes')(C, apiRoutes, ensureAuthenticated, CONFIG_API_KEY);
+	const routes = require('./routes')(C, apiRoutes, CONFIG_API_KEY);
 	UTILS.mergeRecursive(CONFIG, routes.getConfig());
 });
 
@@ -417,7 +312,7 @@ registerRoutes(() => {
 app.use('/chatbot/api', apiRoutes);
 
 // Start jobs
-require('./jobs')(C, app, apiRoutes, ensureAuthenticated);
+require('./jobs')(C, app, apiRoutes);
 
 const os = require("os");
 

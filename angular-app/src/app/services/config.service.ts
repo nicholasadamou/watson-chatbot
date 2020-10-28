@@ -1,31 +1,24 @@
-import { Injectable } from '@angular/core';
-import { NotifyService } from './notify.service';
-import { environment } from '../../environments/environment';
-import { AppConstants } from '../app.constants';
+import { Injectable } from "@angular/core";
+import { environment } from "../../environments/environment";
+import { AppConstants } from "../app.constants";
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: "root",
 })
 export class ConfigService {
-
-  constructor(
-    private notify: NotifyService
-  ) {
-    this.notify.subscribeToLogout(() => {
-      this.resetConfig();
-    });
-  }
+  constructor() {}
 
   saveConfig(): void {
-
-    localStorage.setItem(AppConstants.CONFIG, JSON.stringify(environment.config));
+    localStorage.setItem(
+      AppConstants.CONFIG,
+      JSON.stringify(environment.config)
+    );
   }
 
   loadConfig(): void {
-
     let config: any = JSON.parse(localStorage.getItem(AppConstants.CONFIG));
     if (!config) {
-      this.resetConfig()
+      this.resetConfig();
     }
 
     if (!config) {
@@ -36,7 +29,6 @@ export class ConfigService {
   }
 
   resetConfig(): void {
-
     environment.config = JSON.parse(JSON.stringify(environment.configDefault));
     this.saveConfig();
   }

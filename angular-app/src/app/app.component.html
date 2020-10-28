@@ -52,23 +52,12 @@
           <div class="app-spacer"></div>
           <span
             *ngIf="authService.getEmail()"
-            (click)="openLogoutDialog()"
             [ngClass]="{
               'page-font-size-medium': isWidthMedium(),
               'page-font-size-small': isWidthSmall()
             }"
             >&nbsp;&nbsp;{{ authService.getEmail() }}</span
           >
-          <button
-            *ngIf="showLogin()"
-            type="button"
-            mat-icon-button
-            [disabled]="env.error"
-            (click)="doLogin()"
-            title="Login"
-          >
-            <mat-icon>input</mat-icon>
-          </button>
         </mat-toolbar>
         <mat-toolbar *ngIf="env.state.embeddedMode" color="primary">
           <span
