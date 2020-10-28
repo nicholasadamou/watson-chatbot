@@ -18,8 +18,8 @@ module.exports = (C) => {
 		env: 'dev',
 
 		service: {
-			bluepages: {
-				photoUrl: ''
+			profile: {
+				photo: process.env.PROFILE_PHOTO_URL
 			},
 			chat: {
 				assistants: [{

@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { NotifyService } from "./notify.service";
-import { AppConstants } from "../app.constants";
+import { AppConstants, PROFILE_PICTURE_URL } from "../app.constants";
 import { User } from "../app.constants";
 import { Utils } from "../utils";
 import { environment } from "../../environments/environment";
@@ -15,9 +15,9 @@ export class AuthenticationService {
   login(): void {
     let url = Utils.getServerUrl() + "/auth/login";
 
-    this.http.get<any>(`${url}`).subscribe((result) => {
-      if (result.authenticated) {
-        this.saveUser(result.userInfo);
+    this.http.get<any>(`${url}`).subscribe((response) => {
+      if (response.authenticated) {
+        this.saveUser(response.user);
         this.loadPhoto();
       }
     });
@@ -62,12 +62,9 @@ export class AuthenticationService {
         const email: string = user.email;
         if (user.email) {
           this.http
-            .get(
-              `https://w3-services1.w3-969.ibm.com/myw3/unified-profile-photo/v1/image/${email}`,
-              {
-                responseType: "blob",
-              }
-            )
+            .get(`${user.photo_url}/${email}`, {
+              responseType: "blob",
+            })
             .subscribe((image: Blob) => {
               if (image && image.size > 0) {
                 const reader = new FileReader();

@@ -183,16 +183,16 @@ app.get('/chatbot/auth/login', (req, res) => {
 			if (user) {
 				L.verbose(`${title}: Authenticating session with user '${user.email}' and role '${user.role}'.`);
 
-				res.json({ok: true, authenticated: true, userInfo: user});
+				res.json({ok: true, authenticated: true, user});
 			} else {
-				res.json({ok: true, authenticated: false, userInfo: {}});
+				res.json({ok: true, authenticated: false, user: {}});
 			}
 		});
 	}
 	else {
 		L.verbose(`${title}: Unable to authenticate with session.`);
 
-		res.json({ok: true, authenticated: false, userInfo: {}});
+		res.json({ok: true, authenticated: false, user: {}});
 	}
 });
 

@@ -17,7 +17,8 @@ exports.loadUser = (C, token, callback) => {
 
 			const user = {
 				email: jwt_decoded.emailAddress,
-				role: jwt_decoded.role
+				role: jwt_decoded.role,
+				photo_url: C.config.service.profile.photo
 			}
 
 			L.info(`User '${user.email}' information loaded using JWT Token Method: ${user}`);

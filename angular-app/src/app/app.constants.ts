@@ -12,6 +12,7 @@ export interface User {
   role: string;
   config?: any;
   photo?: any;
+  photo_url?: string;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
