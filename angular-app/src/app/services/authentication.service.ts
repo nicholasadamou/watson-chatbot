@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { NotifyService } from "./notify.service";
-import { AppConstants, PROFILE_PICTURE_URL } from "../app.constants";
+import { AppConstants } from "../app.constants";
 import { User } from "../app.constants";
 import { Utils } from "../utils";
 import { environment } from "../../environments/environment";
