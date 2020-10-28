@@ -148,11 +148,6 @@ const userInfo = {};
   - Reads, decodes, and verifies the JWT Token received from the SSO authentication flow.
   - If authentication was unsuccessful, then login failed; otherwise, server sends back the user details and client saves the information locally.
 
-**Logout Flow**:
-
-- Client -> '/auth/logout'
-- Client delete local user info
-
 ## User Commands
 
 There are various commands available to the user.
