@@ -133,7 +133,7 @@ There are 2 modes authentication can run in:
 
 1. Cloud with sessions.
 
-Request for 'user/info' returns (if the JWT token is not verified or is invalid):
+Request for '/chatbot/auth/login' returns (if the JWT token is not verified or is invalid):
 
 ```js
 const authenticated = false;
