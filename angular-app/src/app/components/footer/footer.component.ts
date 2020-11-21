@@ -129,7 +129,7 @@ export class FooterComponent implements OnInit {
     }
   }
 
-  openQuesionSheet() {
+  openQuestionSheet() {
     this.questionsSheet.open(QuestionsPopupComponent);
   }
 

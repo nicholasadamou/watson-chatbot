@@ -10,7 +10,6 @@ const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const path = require('path');
-const store = require('store');
 const fs = require('fs');
 const uuid = require('uuid/v4');
 
