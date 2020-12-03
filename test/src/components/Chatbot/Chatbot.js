@@ -88,8 +88,12 @@ const Chatbot = (props) => {
 		}
 	}
 
-	const handleChangeScheme = ({key, value}) => {
-		const currentScheme = localStorage.getItem(COLOR_SCHEME);
+	const handleChangeScheme = (event) => {
+		const { key, value } = event.detail;
+
+		if (key !== COLOR_SCHEME) return;
+
+		const currentScheme = value;
 
 		if (scheme !== currentScheme && currentScheme !== null) {
 			setScheme(currentScheme);
