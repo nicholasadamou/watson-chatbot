@@ -78,6 +78,14 @@ export class ChatComponent implements OnInit {
     environment.state.chatInitialized = true;
   }
 
+  applyColorScheme = () => {
+    let colorScheme = localStorage.getItem('user-color-scheme') || this.DEFAULT_SCHEME;
+
+    if (colorScheme) {
+      document.documentElement.setAttribute('data-user-color-scheme', colorScheme);
+    }
+  }
+
   showStartMessages(): void {
     if (!this.env.state.embeddedMode) {
       this.chatService.addMessage(MESSAGE_ENTER_QUESTION(), true);
@@ -112,14 +120,6 @@ export class ChatComponent implements OnInit {
           p = p.then(methods[i]);
         }
       }
-    }
-  }
-
-  applyColorScheme = () => {
-    let colorScheme = localStorage.getItem('user-color-scheme') || this.DEFAULT_SCHEME;
-
-    if (colorScheme) {
-      document.documentElement.setAttribute('data-user-color-scheme', colorScheme);
     }
   }
 
