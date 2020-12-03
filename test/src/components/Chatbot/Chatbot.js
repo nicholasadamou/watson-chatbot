@@ -10,7 +10,7 @@ const Container = styled.div`
   place-content: center;
 
   position: absolute;
-  right: 50px;
+  right: 25px;
   bottom: 25px;
 
   width: 64px;
@@ -22,32 +22,34 @@ const Container = styled.div`
 
   z-index: 9999;
 
-  box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.5);
+  box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.5);
+
+  background-color: var(--chatbot-icon-background-color);
 
   svg {
-	fill: white;
+	fill: var(--chatbot-icon);
+
+	width: 32px;
+	height: 32px;
   }
 
-  @media (prefers-color-scheme: light) {
-    background-color: #008bdf;
+  .bx--assistive-text {
+	  background-color: var(--chatbot-icon) !important;
+	  color: white;
   }
 
-  @media (prefers-color-scheme: no-preference) {
-	background-color: #008bdf;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    background-color: #262626;
+  .bx--tooltip__trigger path, .bx--tooltip__trigger polygon, .bx--tooltip__trigger circle {
+	  fill: white;
   }
 
   iframe {
     position: absolute;
     left: -485px;
-    bottom: 115%;
+	bottom: 115%;
 
-    z-index: 9999;
+	z-index: 9999;
 
-    box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.5);
+	box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.5);
 
     border-radius: 1%;
   }
@@ -55,6 +57,7 @@ const Container = styled.div`
 
 const Chatbot = (props) => {
 	const [isShown, setIsShown] = React.useState(false);
+	const [scheme, setScheme] = React.useState(localStorage.getItem('user-color-scheme'));
 
 	let container = useRef();
 	let iframe = useRef();
@@ -62,6 +65,7 @@ const Chatbot = (props) => {
 	let chat = useRef();
 
 	const toggle = () => setIsShown(!isShown);
+
 	const handleClick = e => {
 		const isVisible = iframe.current.style.display === "block"
 
@@ -82,16 +86,47 @@ const Chatbot = (props) => {
 		}
 	}
 
+	const handleChangeScheme = () => {
+		const currentScheme = localStorage.getItem('user-color-scheme');
+
+		debugger;
+
+		if (scheme !== currentScheme) {
+			setScheme(currentScheme);
+
+			const frame = iframe.current.contentWindow || (iframe.current.contentDocument.document || iframe.current.contentDocument);
+
+			frame.location.reload(false);
+		}
+	}
+
 	useEffect(() => {
 		document.addEventListener('click', handleClick);
+		window.addEventListener('storage', handleChangeScheme);
 
-		return () => document.removeEventListener('click', handleClick);
+		return () => {
+			document.removeEventListener('click', handleClick);
+			window.removeEventListener('storage', handleChangeScheme);
+		}
 	}, []);
 
 	return (
 		<Container onClick={toggle} ref={container}>
-			<iframe src='http://localhost:4200/chatbot' width={550} height={650} style={{ display: isShown ? 'block' : 'none' }} ref={iframe} title="chatbot" />
-			{ isShown ?  <Close ref={close} /> : <Chat ref={chat} /> }
+			<iframe
+				src='http://localhost:4200/chatbot'
+				width={550}
+				height={650}
+				style={{ display: isShown ? 'block' : 'none' }}
+				ref={iframe}
+				title="chatbot"
+			/>
+
+			{ isShown
+				?
+					<Close ref={close} />
+				:
+					<Chat ref={chat} />
+			}
 		</Container>
 	)
 };

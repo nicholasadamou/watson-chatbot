@@ -1,6 +1,26 @@
 @import "~@angular/material/theming";
 @include mat-core();
 
+:root {
+  --color-mode: 'light';
+  --color-dark: #141414;
+  --color-matte-dark: #262626;
+  --color-chatbot: #2a6dac;
+  --color-chatbot-header: #008bdf;
+  --color-chatbot-header-dark: #1b1b1b;
+  --color-chatbot-messages-dark: #6d6d6d;
+  --color-chatbot-messages: #c8daf4;
+  --color-chatbot-user-messages: #e2d2f4;
+  --color-chatbot-user-messages-dark: #424242;
+  --color-light: #ffffff;
+  --text-color: #141414;
+  --icon-color: white;
+  --chatbot-icon: var(--color-chatbot);
+  --chatbot-header: var(--color-chatbot-header);
+  --chatbot-messages: var(--color-chatbot-messages);
+  --chatbot-messages-user: var(--color-chatbot-user-messages);
+}
+
 $ibm-brand: (
   50: #e9edf6,
   100: #c8d3e7,

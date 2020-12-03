@@ -24,8 +24,6 @@ import {
 } from "../../app.constants";
 import { environment } from "../../../environments/environment";
 
-//import { MessageType, MessagePartType, MessagePartSubMessageType } from '../../app.constants';
-
 @Component({
   selector: "app-chat",
   templateUrl: "./chat.component.html",
@@ -35,6 +33,8 @@ export class ChatComponent implements OnInit {
   env: any = environment;
   CONFIG: any = environment.config;
   CHAT: any = environment.server.api["chat"];
+  PREFERS_DARK_COLOR_SCHEME: string = '(prefers-color-scheme: dark)';
+  DEFAULT_SCHEME: string = window.matchMedia(this.PREFERS_DARK_COLOR_SCHEME).matches ? 'dark' : 'light';
 
   constructor(
     public chatService: ChatService,
@@ -50,7 +50,9 @@ export class ChatComponent implements OnInit {
     }
   }
 
-  ngOnInit() {
+  async ngOnInit() {
+    this.applyColorScheme();
+
     if (!environment.state.chatInitialized) {
       this.chatService.startNewHistory();
 
@@ -65,7 +67,6 @@ export class ChatComponent implements OnInit {
           this.CHAT.introStatements,
           this.chatService,
           () => {
-            // environment.config.showIntroduction = false;
             this.configService.saveConfig();
             this.showStartMessages();
           }
@@ -74,86 +75,6 @@ export class ChatComponent implements OnInit {
         this.showStartMessages();
       }
     }
-
-    /* TESTING
-
-    this.chatService.addMessage({
-      type: MessageType.WATSON,
-      messages: [{
-        type: MessagePartType.NORMAL,
-        message: "This is the test message",
-        submessages: [{
-          message: "",
-          type: MessagePartSubMessageType.IMAGE,
-          image: "http://w3-pics.ibm.com/bluepages/photo/Photo.jsp?email=mwanders@us.ibm.com",
-        },{
-          message: "",
-          type: MessagePartSubMessageType.IMAGE,
-          image: "http://w3-pics.ibm.com/bluepages/photo/Photo.jsp?email=mwanders@us.ibm.com",
-        }]
-      }]
-    });
-
-    this.chatService.addMessage({
-      type: MessageType.USER,
-      messages: [{
-        type: MessagePartType.HIGHLIGHT,
-        message: "This is the test message",
-        submessages: [{
-          message: "",
-          type: MessagePartSubMessageType.IMAGE,
-          image: "http://w3-pics.ibm.com/bluepages/photo/Photo.jsp?email=mwanders@us.ibm.com",
-        },{
-          message: "",
-          type: MessagePartSubMessageType.IMAGE,
-          image: "http://w3-pics.ibm.com/bluepages/photo/Photo.jsp?email=mwanders@us.ibm.com",
-        }]
-      }]
-    });
-
-    this.chatService.addMessage({
-      type: MessageType.WATSON,
-      messages: [{
-        type: MessagePartType.NORMAL,
-        message: "This is the test message",
-        submessages: [{
-          type: MessagePartSubMessageType.METADATA,
-          message: "This is a sub message 1",
-          metadata: {
-            title: "Department Details",
-            desc: "12345",
-            keys: ['deptName', 'deptDesc'],
-            deptName: {
-              title: 'Department Name',
-              value: 'This is the department name.'
-            },
-            deptDesc: {
-              title: 'Department Description',
-              value: 'This is the department description.'
-            }
-          }
-        },{
-          type: MessagePartSubMessageType.STRING,
-          message: "This is a sub message 2"
-        }]
-      }]
-    });
-
-    this.chatService.addMessage({
-      type: MessageType.USER,
-      messages: [{
-        type: MessagePartType.NORMAL,
-        message: "This is the test message",
-        submessages: [{
-          type: MessagePartSubMessageType.STRING,
-          message: "This is a sub message 1"
-        },{
-          type: MessagePartSubMessageType.STRING,
-          message: "This is a sub message 2"
-        }]
-      }]
-    });
-    */
 
     environment.state.chatInitialized = true;
   }
@@ -195,6 +116,16 @@ export class ChatComponent implements OnInit {
     }
   }
 
+  applyColorScheme = () => {
+    let colorScheme = localStorage.getItem('user-color-scheme') || this.DEFAULT_SCHEME;
+
+    debugger;
+
+    if (colorScheme) {
+      document.documentElement.setAttribute('data-user-color-scheme', colorScheme);
+    }
+  }
+
   getMessageTimestamp(msg: Message) {
     return new Date(msg.timestamp).toLocaleString("en-US");
   }
@@ -227,7 +158,6 @@ export class ChatComponent implements OnInit {
       text = text.substring(0, text.length - 1);
     }
 
-    //    this.notify.send(text);
     this.chatService.askQuestion(text, () => {});
   }
 

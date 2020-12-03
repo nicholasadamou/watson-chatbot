@@ -1,1 +1,24 @@
 @import 'carbon-components/scss/globals/scss/styles.scss';
+
+:root {
+	--color-mode: 'light';
+	--blue: #2a6dac;
+	--chatbot-icon: white;
+	--chatbot-icon-background-color: var(--blue);
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+	  --color-mode: 'dark';
+	}
+
+	:root:not([data-user-color-scheme]) {
+		--chatbot-icon: white;
+		--chatbot-icon-background-color: black;
+	}
+}
+
+[data-user-color-scheme='dark'] {
+	--chatbot-icon: white;
+	--chatbot-icon-background-color: black;
+}
