@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 
 import styled from 'styled-components';
 
@@ -32,7 +32,7 @@ const DarkModeToggle = (Props) => {
 		if (currentScheme) {
 			setScheme(currentScheme);
 
-			document.documentElement.setAttribute('data-user-color-scheme', currentScheme);
+			document.documentElement.setAttribute(`data-${COLOR_SCHEME}`, currentScheme);
 		}
 	}
 
@@ -46,7 +46,7 @@ const DarkModeToggle = (Props) => {
         return response;
     }
 
-	const toggleScheme = (e) => {
+	const toggleScheme = () => {
 		let currentScheme = localStorage.getItem(COLOR_SCHEME);
 
 		switch (currentScheme) {
@@ -60,7 +60,7 @@ const DarkModeToggle = (Props) => {
                 currentScheme = 'light';
 				break;
 			default:
-				currentScheme = 'dark';
+				currentScheme = DEFAULT_SCHEME;
 				break;
 		}
 
@@ -69,16 +69,9 @@ const DarkModeToggle = (Props) => {
 		return currentScheme;
 	}
 
-	const handleToggle = (e) => {
-		applyColorScheme(toggleScheme(e));
+	const handleToggle = () => {
+		applyColorScheme(toggleScheme());
 	}
-
-	useEffect(() => {
-		// By default set color scheme to what ever the system color scheme is.
-		localStorage.setItem(COLOR_SCHEME, DEFAULT_SCHEME);
-
-		applyColorScheme(DEFAULT_SCHEME);
-	}, []);
 
 	return (
 		<Container>

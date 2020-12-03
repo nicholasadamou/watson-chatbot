@@ -56,8 +56,10 @@ const Container = styled.div`
 `;
 
 const Chatbot = (props) => {
+	const COLOR_SCHEME = 'user-color-scheme';
+
 	const [isShown, setIsShown] = React.useState(false);
-	const [scheme, setScheme] = React.useState(localStorage.getItem('user-color-scheme'));
+	const [scheme, setScheme] = React.useState(sessionStorage.getItem(COLOR_SCHEME));
 
 	let container = useRef();
 	let iframe = useRef();
@@ -86,12 +88,10 @@ const Chatbot = (props) => {
 		}
 	}
 
-	const handleChangeScheme = () => {
-		const currentScheme = localStorage.getItem('user-color-scheme');
+	const handleChangeScheme = ({key, value}) => {
+		const currentScheme = localStorage.getItem(COLOR_SCHEME);
 
-		debugger;
-
-		if (scheme !== currentScheme) {
+		if (scheme !== currentScheme && currentScheme !== null) {
 			setScheme(currentScheme);
 
 			const frame = iframe.current.contentWindow || (iframe.current.contentDocument.document || iframe.current.contentDocument);
@@ -102,18 +102,18 @@ const Chatbot = (props) => {
 
 	useEffect(() => {
 		document.addEventListener('click', handleClick);
-		window.addEventListener('storage', handleChangeScheme);
+		window.addEventListener('color-scheme-change', handleChangeScheme);
 
 		return () => {
 			document.removeEventListener('click', handleClick);
-			window.removeEventListener('storage', handleChangeScheme);
+			window.removeEventListener('color-scheme-change', handleChangeScheme);
 		}
-	}, []);
+	}, [scheme]);
 
 	return (
 		<Container onClick={toggle} ref={container}>
 			<iframe
-				src='http://localhost:4200/chatbot'
+				src='/chatbot'
 				width={550}
 				height={650}
 				style={{ display: isShown ? 'block' : 'none' }}

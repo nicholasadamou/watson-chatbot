@@ -33,8 +33,7 @@ export class ChatComponent implements OnInit {
   env: any = environment;
   CONFIG: any = environment.config;
   CHAT: any = environment.server.api["chat"];
-  PREFERS_DARK_COLOR_SCHEME: string = '(prefers-color-scheme: dark)';
-  DEFAULT_SCHEME: string = window.matchMedia(this.PREFERS_DARK_COLOR_SCHEME).matches ? 'dark' : 'light';
+  DEFAULT_SCHEME: string = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 
   constructor(
     public chatService: ChatService,
@@ -50,7 +49,7 @@ export class ChatComponent implements OnInit {
     }
   }
 
-  async ngOnInit() {
+  ngOnInit() {
     this.applyColorScheme();
 
     if (!environment.state.chatInitialized) {
@@ -118,8 +117,6 @@ export class ChatComponent implements OnInit {
 
   applyColorScheme = () => {
     let colorScheme = localStorage.getItem('user-color-scheme') || this.DEFAULT_SCHEME;
-
-    debugger;
 
     if (colorScheme) {
       document.documentElement.setAttribute('data-user-color-scheme', colorScheme);
