@@ -325,7 +325,7 @@ app.listen(C.PORT, () => {
 		if (C.HOST.includes("http") || C.HOST.includes("https")) {
 			L.info(`To view your app, open this link in your browser: ${C.HOST}:${C.PORT}/chatbot`);
 		} else {
-			L.info(`To view your app, open this link in your browser: ${C.PROTOCOL}//${C.HOST}:${C.PORT}/chatbot`);
+			L.info(`To view your app, open this link in your browser: ${C.PROTOCOL}://${C.HOST}:${C.PORT}/chatbot`);
 		}
 	} else {
 		L.info(`Running in Cloud on Port='${C.PORT}', Env='${ENV}'.`);
