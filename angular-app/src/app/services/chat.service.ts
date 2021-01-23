@@ -414,8 +414,9 @@ export class ChatService {
       const h = JSON.parse(JSON.stringify(message));
       h.history = true;
       this.history.push(h);
-      const historyRecords =
-        JSON.parse(localStorage.getItem(AppConstants.HISTORY)) || [];
+      const historyRecords = JSON.parse(
+        localStorage.getItem(AppConstants.HISTORY)
+      ) || [];
       historyRecords[this.historySlot] = this.history;
       localStorage.setItem(
         AppConstants.HISTORY,

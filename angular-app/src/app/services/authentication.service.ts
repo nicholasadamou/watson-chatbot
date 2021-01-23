@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { NotifyService } from "./notify.service";
-import { AppConstants } from "../app.constants";
+import {AppConstants, MESSAGE_LOGIN_NOT_IDENTIFIED} from "../app.constants";
 import { User } from "../app.constants";
 import { Utils } from "../utils";
 import { environment } from "../../environments/environment";
@@ -10,17 +10,23 @@ import { environment } from "../../environments/environment";
   providedIn: "root",
 })
 export class AuthenticationService {
-  constructor(private http: HttpClient, private notify: NotifyService) {}
+  constructor(
+    private http: HttpClient,
+    private notify: NotifyService
+  ) {}
 
   login(): void {
     let url = Utils.getServerUrl() + "/auth/login";
 
-    this.http.get<any>(`${url}`).subscribe((response) => {
-      if (response.authenticated) {
-        this.saveUser(response.user);
-        this.loadPhoto();
-      }
-    });
+    this.http
+      .get<any>(`${url}`)
+      .subscribe((result) => {
+
+        if (result.authenticated) {
+          this.saveUser(result.userInfo);
+          this.loadPhoto();
+        }
+      });
   }
 
   saveUser(user: User): void {
@@ -62,9 +68,12 @@ export class AuthenticationService {
         const email: string = user.email;
         if (user.email) {
           this.http
-            .get(`${user.photo_url}/${email}`, {
-              responseType: "blob",
-            })
+            .get(
+              `https://w3-services1.w3-969.ibm.com/myw3/unified-profile-photo/v1/image/${email}`,
+              {
+                responseType: "blob",
+              }
+            )
             .subscribe((image: Blob) => {
               if (image && image.size > 0) {
                 const reader = new FileReader();

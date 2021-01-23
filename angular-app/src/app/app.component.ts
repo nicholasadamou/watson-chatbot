@@ -73,7 +73,9 @@ export class AppComponent implements OnInit {
 
     // Perform login flow on initial opening of the chat-bot if not authenticated.
     const isAuthenticated: boolean = this.authService.isAuthenticated();
-    if (!isAuthenticated) {
+    if (
+      !isAuthenticated
+    ) {
       this.doLogin();
     }
 

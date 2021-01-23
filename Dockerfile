@@ -4,14 +4,20 @@ LABEL solution="nicholasadamou"
 LABEL component="watson-chatbot"
 
 USER root
-RUN apt install -y bash git
+RUN apt install -y bash git g++
 
 # See best practices on how to run node applications in Docker here:
 # https://github.com/nodejs/docker-node/blob/master/docs/BestPractices.md
 #
 WORKDIR /opt/app
 RUN chown node /opt/app
-USER node
+
+RUN rm -rf server/ui/*
+RUN mkdir -p server/videos
+RUN chown node server/videos
+
+COPY --chown=node angular-app /opt/app/angular-app
+COPY --chown=node server /opt/app/server
 
 # We copy the package.json to leverage the layer caching
 # capabilities of Docker. If the package.json is not
@@ -25,8 +31,6 @@ USER node
 # reuse a previously cached layer associated to the instruction
 # "RUN npm install" which has not changed.
 #
-COPY --chown=node ./package.json /opt/app/package.json
-
 # If the package.json has not changed, the previous layer has
 # not changed, so this layer is not changed either and the
 # command will not be re-executed but the associated layer
@@ -40,7 +44,15 @@ COPY --chown=node ./package.json /opt/app/package.json
 #       This should not be a problem for a production deployment
 #       where we should always fix versions.
 #
+COPY --chown=node ./package.json /opt/app/package.json
+COPY --chown=node ./angular-app/package.json /opt/app/angular-app/package.json
+
 RUN yarn install
+RUN yarn --cwd angular-app install
+
+WORKDIR /opt/app/angular-app
+RUN node_modules/@angular/cli/bin/ng build --prod
+RUN cp -a dist/angular-app/. /opt/app/server/ui/
 
 # We copy the rest of the application, this will override the
 # previously copied files, but they're the same so we don't
@@ -48,16 +60,6 @@ RUN yarn install
 #
 ARG PROP
 LABEL PROP=${PROP}
-
-COPY --chown=node angular-app /opt/app/angular-app
-COPY --chown=node server /opt/app/server
-
-# Build the chatbot front-end and copy the production build to /opt/app/server/ui/
-WORKDIR /opt/app/angular-app
-RUN yarn install
-RUN node_modules/@angular/cli/bin/ng build --prod
-RUN rm -rf /opt/app/server/ui/*
-RUN cp -a /opt/app/angular-app/dist/angular-app/. /opt/app/server/ui/
 
 WORKDIR /opt/app
 

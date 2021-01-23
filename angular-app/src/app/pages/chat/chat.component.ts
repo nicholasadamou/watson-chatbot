@@ -1,17 +1,17 @@
-import { Component, OnInit } from "@angular/core";
-import { ChatService } from "../../services/chat.service";
-import { NotifyService } from "../../services/notify.service";
-import { AuthenticationService } from "../../services/authentication.service";
-import { ConfigService } from "../../services/config.service";
-import { MatDialog } from "@angular/material/dialog";
-import { GenericDialogComponent } from "../../dialogs/generic-dialog/generic-dialog.component";
+import {Component, OnInit} from "@angular/core";
+import {ChatService} from "../../services/chat.service";
+import {NotifyService} from "../../services/notify.service";
+import {AuthenticationService} from "../../services/authentication.service";
+import {ConfigService} from "../../services/config.service";
+import {MatDialog} from "@angular/material/dialog";
+import {GenericDialogComponent} from "../../dialogs/generic-dialog/generic-dialog.component";
 import {
   ImageDialogComponent,
   ImageDialogData,
 } from "../../dialogs/image-dialog/image-dialog.component";
-import { GenericTooltipComponent } from "../../dialogs/generic-tooltip/generic-tooltip.component";
-import { Message } from "../../app.constants";
-import { Utils } from "../../utils";
+import {GenericTooltipComponent} from "../../dialogs/generic-tooltip/generic-tooltip.component";
+import {Message} from "../../app.constants";
+import {Utils} from "../../utils";
 import {
   MessagePartSubMessage,
   MessagePartSubMessageType,
@@ -22,7 +22,10 @@ import {
   MESSAGE_ENTER_QUESTION,
   MessageType,
 } from "../../app.constants";
-import { environment } from "../../../environments/environment";
+import {environment} from "../../../environments/environment";
+
+//import { MessageType, MessagePartType, MessagePartSubMessageType } from '../../app.constants';
+const STORAGE_KEY = 'user-color-scheme';
 
 @Component({
   selector: "app-chat",
@@ -33,7 +36,6 @@ export class ChatComponent implements OnInit {
   env: any = environment;
   CONFIG: any = environment.config;
   CHAT: any = environment.server.api["chat"];
-  DEFAULT_SCHEME: string = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 
   constructor(
     public chatService: ChatService,
@@ -45,12 +47,12 @@ export class ChatComponent implements OnInit {
     private notify: NotifyService
   ) {
     if (!this.CHAT) {
-      this.CHAT = { assistantIds: {} };
+      this.CHAT = {assistantIds: {}};
     }
   }
 
-  ngOnInit() {
-    this.applyColorScheme();
+  async ngOnInit() {
+    this.applySetting('');
 
     if (!environment.state.chatInitialized) {
       this.chatService.startNewHistory();
@@ -66,29 +68,106 @@ export class ChatComponent implements OnInit {
           this.CHAT.introStatements,
           this.chatService,
           () => {
+            // environment.config.showIntroduction = false;
             this.configService.saveConfig();
             this.showStartMessages();
           }
         );
       } else {
         this.showStartMessages();
+
       }
     }
+
+    /* TESTING
+
+    this.chatService.addMessage({
+      type: MessageType.WATSON,
+      messages: [{
+        type: MessagePartType.NORMAL,
+        message: "This is the test message",
+        submessages: [{
+          message: "",
+          type: MessagePartSubMessageType.IMAGE,
+          image: "http://w3-pics.ibm.com/bluepages/photo/Photo.jsp?email=mwanders@us.ibm.com",
+        },{
+          message: "",
+          type: MessagePartSubMessageType.IMAGE,
+          image: "http://w3-pics.ibm.com/bluepages/photo/Photo.jsp?email=mwanders@us.ibm.com",
+        }]
+      }]
+    });
+
+    this.chatService.addMessage({
+      type: MessageType.USER,
+      messages: [{
+        type: MessagePartType.HIGHLIGHT,
+        message: "This is the test message",
+        submessages: [{
+          message: "",
+          type: MessagePartSubMessageType.IMAGE,
+          image: "http://w3-pics.ibm.com/bluepages/photo/Photo.jsp?email=mwanders@us.ibm.com",
+        },{
+          message: "",
+          type: MessagePartSubMessageType.IMAGE,
+          image: "http://w3-pics.ibm.com/bluepages/photo/Photo.jsp?email=mwanders@us.ibm.com",
+        }]
+      }]
+    });
+
+    this.chatService.addMessage({
+      type: MessageType.WATSON,
+      messages: [{
+        type: MessagePartType.NORMAL,
+        message: "This is the test message",
+        submessages: [{
+          type: MessagePartSubMessageType.METADATA,
+          message: "This is a sub message 1",
+          metadata: {
+            title: "Department Details",
+            desc: "12345",
+            keys: ['deptName', 'deptDesc'],
+            deptName: {
+              title: 'Department Name',
+              value: 'This is the department name.'
+            },
+            deptDesc: {
+              title: 'Department Description',
+              value: 'This is the department description.'
+            }
+          }
+        },{
+          type: MessagePartSubMessageType.STRING,
+          message: "This is a sub message 2"
+        }]
+      }]
+    });
+
+    this.chatService.addMessage({
+      type: MessageType.USER,
+      messages: [{
+        type: MessagePartType.NORMAL,
+        message: "This is the test message",
+        submessages: [{
+          type: MessagePartSubMessageType.STRING,
+          message: "This is a sub message 1"
+        },{
+          type: MessagePartSubMessageType.STRING,
+          message: "This is a sub message 2"
+        }]
+      }]
+    });
+    */
 
     environment.state.chatInitialized = true;
   }
 
-  applyColorScheme = () => {
-    let colorScheme = localStorage.getItem('user-color-scheme') || this.DEFAULT_SCHEME;
-
-    if (colorScheme) {
-      document.documentElement.setAttribute('data-user-color-scheme', colorScheme);
-    }
-  }
-
   showStartMessages(): void {
     if (!this.env.state.embeddedMode) {
-      this.chatService.addMessage(MESSAGE_ENTER_QUESTION(), true);
+      this.chatService.addMessage(
+        MESSAGE_ENTER_QUESTION(this.authService.isAuthenticated()),
+        true
+      );
 
       if (this.CHAT.startStatements && this.CHAT.startStatements.length > 0) {
         let methods = new Array(this.CHAT.startStatements.length);
@@ -123,8 +202,22 @@ export class ChatComponent implements OnInit {
     }
   }
 
+  applySetting = passedSetting => {
+    const currentSetting = passedSetting || localStorage.getItem(STORAGE_KEY);
+    console.log('currentSetting for chatbot: ', currentSetting);
+
+    if (currentSetting) {
+      document.documentElement.setAttribute('data-user-color-scheme', currentSetting);
+    }
+  }
+
   getMessageTimestamp(msg: Message) {
-    return new Date(msg.timestamp).toLocaleString("en-US");
+    return new Date(msg.timestamp).toLocaleString("en-US", {
+      month: "short",
+      day: "numeric",
+      hour: "numeric",
+      minute: "numeric"
+    });
   }
 
   openImageDialog(event: any, src: string, message?: string): void {
@@ -137,7 +230,8 @@ export class ChatComponent implements OnInit {
       data: dialogData,
     });
 
-    dialogRef.afterClosed().subscribe(/*accepted*/ () => {});
+    dialogRef.afterClosed().subscribe(/*accepted*/ () => {
+    });
   }
 
   optionSelect(value: string): void {
@@ -155,7 +249,9 @@ export class ChatComponent implements OnInit {
       text = text.substring(0, text.length - 1);
     }
 
-    this.chatService.askQuestion(text, () => {});
+    //    this.notify.send(text);
+    this.chatService.askQuestion(text, () => {
+    });
   }
 
   isAssistantDisabled(message: Message): boolean {

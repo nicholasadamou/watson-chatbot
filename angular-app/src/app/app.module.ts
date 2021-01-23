@@ -16,7 +16,6 @@ import { HelpComponent } from "./pages/help/help.component";
 import { ErrorComponent } from "./pages/error/error.component";
 import { FooterComponent } from "./components/footer/footer.component";
 import { SafeHtmlPipe } from "./pipes/safe-html.pipe";
-import { LogoutDialogComponent } from "./dialogs/logout-dialog/logout-dialog.component";
 import { GenericDialogComponent } from "./dialogs/generic-dialog/generic-dialog.component";
 import { ImageDialogComponent } from "./dialogs/image-dialog/image-dialog.component";
 import { GenericTooltipComponent } from "./dialogs/generic-tooltip/generic-tooltip.component";
@@ -39,7 +38,6 @@ export function startupServiceFactory(
     FooterComponent,
     SafeHtmlPipe,
     ErrorComponent,
-    LogoutDialogComponent,
     GenericDialogComponent,
     ImageDialogComponent,
     GenericTooltipComponent,
@@ -48,7 +46,6 @@ export function startupServiceFactory(
   ],
   entryComponents: [
     GenericDialogComponent,
-    LogoutDialogComponent,
     ImageDialogComponent,
     YesNoDialogComponent,
     QuestionsPopupComponent,

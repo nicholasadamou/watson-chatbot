@@ -1,30 +1,42 @@
 <div>
   <mat-sidenav-container class="all-wrap" fullscreen>
     <mat-sidenav #sidenav mode="push" class="app-sidenav" color="primary">
-      <mat-toolbar color="primary"> Menu </mat-toolbar>
+      <mat-toolbar color="primary"> Menu</mat-toolbar>
       <mat-nav-list>
         <a
           mat-list-item
           class="sidenav-list-item"
           routerLink="/"
           (click)="setPage('chat'); sidenav.toggle()"
-          ><button mat-icon-button><mat-icon>person</mat-icon></button
-          >Messages</a
+        >
+          <button mat-icon-button>
+            <mat-icon>person</mat-icon>
+          </button
+          >
+          Messages</a
         >
         <a
           mat-list-item
           class="sidenav-list-item"
           routerLink="/app-config"
           (click)="setPage('config'); sidenav.toggle()"
-          ><button mat-icon-button><mat-icon>build</mat-icon></button
-          >Configuration</a
+        >
+          <button mat-icon-button>
+            <mat-icon>build</mat-icon>
+          </button
+          >
+          Configuration</a
         >
         <a
           mat-list-item
           class="sidenav-list-item"
           routerLink="/app-help"
           (click)="setPage('help'); sidenav.toggle()"
-          ><button mat-icon-button><mat-icon>help</mat-icon></button>More
+        >
+          <button mat-icon-button>
+            <mat-icon>help</mat-icon>
+          </button>
+          More
           Help</a
         >
       </mat-nav-list>
@@ -32,32 +44,42 @@
     <div class="page-wrap">
       <header role="banner">
         <mat-toolbar *ngIf="!env.state.embeddedMode" color="primary">
-          <button
-            type="button"
-            mat-icon-button
-            [disabled]="env.error"
-            (click)="sidenav.toggle()"
-            title="Open Sidenav"
-          >
-            <mat-icon>menu</mat-icon>
-          </button>
+          <!--          <button-->
+          <!--            type="button"-->
+          <!--            mat-icon-button-->
+          <!--            [disabled]="env.error"-->
+          <!--            (click)="sidenav.toggle()"-->
+          <!--            title="Open Sidenav"-->
+          <!--          >-->
+          <!--            <mat-icon>menu</mat-icon>-->
+          <!--          </button>-->
           <span
-            (click)="sidenav.toggle()"
             [ngClass]="{
               'page-font-size-medium': isWidthMedium(),
               'page-font-size-small': isWidthSmall()
             }"
-            >{{ title }}</span
+          >{{ title }}</span
           >
           <div class="app-spacer"></div>
-          <span
-            *ngIf="authService.getEmail()"
-            [ngClass]="{
-              'page-font-size-medium': isWidthMedium(),
-              'page-font-size-small': isWidthSmall()
-            }"
-            >&nbsp;&nbsp;{{ authService.getEmail() }}</span
-          >
+          <div style="display: flex; align-items: center">
+            <span
+              style="margin-right: 10px"
+              *ngIf="authService.getEmail()"
+              [ngClass]="{
+                'page-font-size-medium': isWidthMedium(),
+                'page-font-size-small': isWidthSmall()
+              }"
+            >{{ authService.getEmail() }}</span>
+            <button
+              type="button"
+              mat-icon-button
+              [disabled]="env.error"
+              (click)="openChat()"
+              title="Open"
+            >
+              <mat-icon>open_in_new</mat-icon>
+            </button>
+          </div>
         </mat-toolbar>
         <mat-toolbar *ngIf="env.state.embeddedMode" color="primary">
           <span
@@ -65,7 +87,7 @@
               'page-font-size-medium': isWidthMedium(),
               'page-font-size-small': isWidthSmall()
             }"
-            >{{ title }}</span
+          >{{ title }}</span
           >
           <div class="app-spacer"></div>
           <button

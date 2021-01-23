@@ -5,15 +5,8 @@ import * as Rx from "rxjs";
   providedIn: "root",
 })
 export class NotifyService {
-  paneToggleEvent = new Rx.Subject();
-  widgetDataEvent = new Rx.Subject();
-  logoutEvent = new Rx.Subject();
   answerEvent = new Rx.Subject();
   scrollEvent = new Rx.Subject();
-
-  subscribeToLogout(callback: any): void {
-    this.logoutEvent.subscribe(callback);
-  }
 
   subscribeToSend(callback: any): void {
     this.answerEvent.subscribe(callback);
@@ -21,10 +14,6 @@ export class NotifyService {
 
   subscribeToScroll(callback: any): void {
     this.scrollEvent.subscribe(callback);
-  }
-
-  logout(): void {
-    this.logoutEvent.next();
   }
 
   send(value: string): void {

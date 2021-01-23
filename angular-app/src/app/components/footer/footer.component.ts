@@ -1,10 +1,4 @@
-import {
-  Component,
-  OnInit,
-  ElementRef,
-  ViewChild,
-  ViewEncapsulation,
-} from "@angular/core";
+import {Component, OnInit, ElementRef, ViewChild, ViewEncapsulation} from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { ChatService } from "../../services/chat.service";
 import { NotifyService } from "../../services/notify.service";
@@ -24,7 +18,7 @@ import { take } from "rxjs/operators";
   selector: "app-footer",
   templateUrl: "./footer.component.html",
   styleUrls: ["./footer.component.css"],
-  encapsulation: ViewEncapsulation.None,
+  encapsulation: ViewEncapsulation.None
 })
 export class FooterComponent implements OnInit {
   @ViewChild("theFooter") theFooter: ElementRef;

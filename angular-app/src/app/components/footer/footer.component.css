@@ -1,9 +1,86 @@
 .page-footer {
-  background-color: #f8f8f8;
-  padding: 10px;
+  background-color: white;
+
+  padding: 0 20px 16px;
+
   text-align: center;
 }
 
 .chat-field {
   width: 100%;
+}
+
+.chat-field > .mat-form-field-appearance-legacy, .mat-form-field-wrapper {
+  padding-bottom: 0 !important;
+}
+
+.chat-field > .mat-form-field-appearance-legacy, .mat-form-field-underline {
+  position: absolute;
+  bottom: 0 !important;
+
+  height: 1px;
+}
+
+.chat-field > .mat-form-field-appearance-legacy, .mat-form-field-infix {
+  padding: 0.5em 0 !important;
+
+  height: 21px;
+}
+
+.chat-field > .mat-form-field-appearance-legacy, .mat-form-field-ripple {
+  height: 1px !important;
+}
+
+.mat-form-field.mat-form-field-invalid.mat-focused .mat-form-field-ripple, .mat-form-field.mat-form-field-invalid .mat-form-field-ripple.mat-accent {
+  background-color: #f44336;
+}
+
+.mat-form-field.mat-focused .mat-form-field-ripple {
+  background-color: var(--chatbot-messages-user);
+}
+
+.mat-input-element {
+  caret-color: var(--chatbot-messages-user) !important;
+}
+
+/*.mat-form-field-label-wrapper {*/
+/*  background-color: #f4f4f4 !important;*/
+/*}*/
+
+#askButton[disabled] {
+  background-color: rgba(0, 0, 0, 0.12);
+}
+
+#askButton {
+  background-color: var(--chatbot-messages-user);
+}
+
+.mat-form-field.mat-focused #mat-form-field-label-1 {
+  color: var(--chatbot-messages-user);
+}
+
+#mat-input-0, #mat-form-field-label-1 {
+  margin-left: 16px;
+}
+
+.mat-form-field-infix {
+  background-color: #f2f4f8;
+}
+
+.mat-form-field-appearance-legacy.mat-form-field-can-float.mat-form-field-should-float .mat-form-field-label, .mat-form-field-appearance-legacy.mat-form-field-can-float .mat-input-server:focus .mat-form-field-label-wrapper .mat-form-field-label {
+  transform: translateY(-0.9em)
+            scale(0.75)
+            perspective(100px)
+            translateZ(0.001px);
+}
+
+.chat-form {
+  display: flex;
+  align-items: flex-end;
+}
+
+#askButton {
+  border-radius: 0;
+
+  height: 50px;
 }

@@ -1,6 +1,3 @@
-<mat-toolbar *ngIf="!env.state.embeddedMode">
-  <span>Messages</span>
-</mat-toolbar>
 <div
   *ngIf="chatService.getMessages()"
   [ngClass]="{
@@ -34,76 +31,76 @@
         [ngClass]="{ 'chat-assistant-disabled': isAssistantDisabled(message) }"
       >
         <tr>
-          <td class="chat-icon-container">
-            <img
-              [ngClass]="{
-                'chat-icon': !env.state.embeddedMode,
-                'chat-icon-embedded': env.state.embeddedMode
-              }"
-              [src]="getAssistantImage(message)"
-              [alt]="getAssistantName(message)"
-            />
-          </td>
+<!--          <td class="chat-icon-container">-->
+<!--            <img-->
+<!--              [ngClass]="{-->
+<!--                'chat-icon': !env.state.embeddedMode,-->
+<!--                'chat-icon-embedded': env.state.embeddedMode-->
+<!--              }"-->
+<!--              [src]="getAssistantImage(message)"-->
+<!--              [alt]="getAssistantName(message)"-->
+<!--            />-->
+<!--          </td>-->
           <td>
             <table class="chat-watson-message-pos-container">
               <tr height="2">
                 <td></td>
               </tr>
-              <tr>
-                <td valign="middle">
-                  <span
-                    matTooltip="Name of the assistant providing the response"
-                    matTooltipPosition="above"
-                    aria-label="Name of the assistant providing the response"
-                  >
-                    <span *ngIf="isAssistantDisabled(message)"
-                      ><i>Deactivated</i><br
-                    /></span>
-                    <b>{{ getAssistantName(message) }}</b>
-                  </span>
-                  <span
-                    *ngIf="CONFIG.showConfidence && message.confidence"
-                    matTooltip="Confidence in the response given"
-                    matTooltipPosition="above"
-                    aria-label="Confidence in the response given"
-                  >
-                    ( {{ round(message.confidence * 100) }}%
-                    <span
-                      *ngIf="message.confidence < 0.6"
-                      class="chat-watson-confidence"
-                    >
-                      <img
-                        class="chat-icon-mini chat-icon-mini-low"
-                        src="assets/images/star_border_black.png"
-                        alt="Confident"
-                      />
-                    </span>
-                    <span
-                      *ngIf="
-                        message.confidence >= 0.6 && message.confidence < 0.85
-                      "
-                      class="chat-watson-confidence"
-                    >
-                      <img
-                        class="chat-icon-mini chat-icon-mini-medium"
-                        src="assets/images/star_half_black.png"
-                        alt="Confident"
-                      />
-                    </span>
-                    <span
-                      *ngIf="message.confidence >= 0.85"
-                      class="chat-watson-confidence"
-                    >
-                      <img
-                        class="chat-icon-mini chat-icon-mini-high"
-                        src="assets/images/star_black.png"
-                        alt="Confident"
-                      />
-                    </span>
-                    )
-                  </span>
-                </td>
-              </tr>
+<!--              <tr>-->
+<!--                <td valign="middle">-->
+<!--&lt;!&ndash;                  <span&ndash;&gt;-->
+<!--&lt;!&ndash;                    matTooltip="Name of the assistant providing the response"&ndash;&gt;-->
+<!--&lt;!&ndash;                    matTooltipPosition="above"&ndash;&gt;-->
+<!--&lt;!&ndash;                    aria-label="Name of the assistant providing the response"&ndash;&gt;-->
+<!--&lt;!&ndash;                  >&ndash;&gt;-->
+<!--&lt;!&ndash;                    <span *ngIf="isAssistantDisabled(message)"&ndash;&gt;-->
+<!--&lt;!&ndash;                      ><i>Deactivated</i><br&ndash;&gt;-->
+<!--&lt;!&ndash;                    /></span>&ndash;&gt;-->
+<!--&lt;!&ndash;                    <b>{{ getAssistantName(message) }}</b>&ndash;&gt;-->
+<!--&lt;!&ndash;                  </span>&ndash;&gt;-->
+<!--                  <span-->
+<!--                    *ngIf="CONFIG.showConfidence && message.confidence"-->
+<!--                    matTooltip="Confidence in the response given"-->
+<!--                    matTooltipPosition="above"-->
+<!--                    aria-label="Confidence in the response given"-->
+<!--                  >-->
+<!--                    ( {{ round(message.confidence * 100) }}%-->
+<!--                    <span-->
+<!--                      *ngIf="message.confidence < 0.6"-->
+<!--                      class="chat-watson-confidence"-->
+<!--                    >-->
+<!--                      <img-->
+<!--                        class="chat-icon-mini chat-icon-mini-low"-->
+<!--                        src="assets/images/star_border_black.png"-->
+<!--                        alt="Confident"-->
+<!--                      />-->
+<!--                    </span>-->
+<!--                    <span-->
+<!--                      *ngIf="-->
+<!--                        message.confidence >= 0.6 && message.confidence < 0.85-->
+<!--                      "-->
+<!--                      class="chat-watson-confidence"-->
+<!--                    >-->
+<!--                      <img-->
+<!--                        class="chat-icon-mini chat-icon-mini-medium"-->
+<!--                        src="assets/images/star_half_black.png"-->
+<!--                        alt="Confident"-->
+<!--                      />-->
+<!--                    </span>-->
+<!--                    <span-->
+<!--                      *ngIf="message.confidence >= 0.85"-->
+<!--                      class="chat-watson-confidence"-->
+<!--                    >-->
+<!--                      <img-->
+<!--                        class="chat-icon-mini chat-icon-mini-high"-->
+<!--                        src="assets/images/star_black.png"-->
+<!--                        alt="Confident"-->
+<!--                      />-->
+<!--                    </span>-->
+<!--                    )-->
+<!--                  </span>-->
+<!--                </td>-->
+<!--              </tr>-->
               <tr *ngIf="CONFIG.showTimestamps && message.timestamp">
                 <td>
                   <span class="chat-message-timestamp">{{
@@ -151,6 +148,7 @@
                         >
                           <tr *ngIf="k == 0">
                             <td
+                              *ngIf="!isVideo(submsg)"
                               (click)="part.expanded = !part.expanded"
                               class="chat-icon-mini chat-icon-mini-collapsible"
                             >
@@ -496,7 +494,7 @@
                             <span
                               *ngIf="part.submessages.length <= 1"
                               class="chat-icon-mini"
-                              >&nbsp;</span
+                              ></span
                             >
                           </td>
                           <td

@@ -62,7 +62,7 @@ export class ConfigComponent implements OnInit {
       data: {
         title: "Reset all",
         description:
-          "This will clear all your user data and history, and reset your configuration settings.  Do you want to continue?",
+          "This will clear all of your chat history and reset your configuration settings.  Do you want to continue?",
         action: "Yes",
         canceled: true,
       },

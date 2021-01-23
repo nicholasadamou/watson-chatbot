@@ -12,7 +12,6 @@ export interface User {
   role: string;
   config?: any;
   photo?: any;
-  photo_url?: string;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -168,12 +167,12 @@ export const MESSAGE_LOGIN_NOT_IDENTIFIED = (
   return msg;
 };
 
-export const MESSAGE_ENTER_QUESTION = (): Message => {
+export const MESSAGE_ENTER_QUESTION = (isAuthenticated: boolean): Message => {
   const msgs: MessagePart[] = [];
 
   msgs.push({
     type: MessagePartType.NORMAL,
-    message: "Who are you?",
+    message: "What can I ask?",
   });
 
   return {
@@ -204,6 +203,16 @@ export const MESSAGE_UNABLE_TO_COMMUNICATE = (
       },
     ],
   };
+};
+
+export const MESSAGE_SERVER_LOGGED_OUT: Message = {
+  type: MessageType.WATSON,
+  messages: [
+    {
+      type: MessagePartType.HIGHLIGHT,
+      message: "You have been logged out.",
+    },
+  ],
 };
 
 ////////////////////////////////////////////////////////////////////////////////
