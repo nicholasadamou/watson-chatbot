@@ -211,4 +211,9 @@ export class ChatComponent implements OnInit {
   isVideo(submsg: MessagePartSubMessage): boolean {
     return submsg.type == MessagePartSubMessageType.VIDEO;
   }
+  
+  
+  isImage(submsg: MessagePartSubMessage): boolean {
+    return submsg.type == MessagePartSubMessageType.IMAGE;
+  }
 }
