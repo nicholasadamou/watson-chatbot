@@ -5,12 +5,13 @@
   --color-mode: 'light';
   --color-dark: #141414;
   --color-matte-dark: #262626;
+  --color-bluish: #008bdf;
   --color-chatbot: #2a6dac;
   --color-chatbot-header: #008bdf;
   --color-chatbot-header-dark: #1b1b1b;
   --color-chatbot-messages-dark: #6d6d6d;
-  --color-chatbot-messages: #c8daf4;
-  --color-chatbot-user-messages: #e2d2f4;
+  --color-chatbot-messages: #f2f4f8;
+  --color-chatbot-user-messages: var(--color-bluish);
   --color-chatbot-user-messages-dark: #424242;
   --color-light: #ffffff;
   --text-color: #141414;

@@ -324,7 +324,27 @@ module.exports = function (C, apiRoutes) {
 
 	// Function to send the message to all assistants provided.
 
-	const sendMessageAssistantUnlocked = (req, res, msg, assistants, clientChatSessionId, skipLock, recordHistory) => {
+	const sendMessageAssistantUnlocked = (req, res, msg, assistants, clientChatSessionId, skipLock, skipWatson, recordHistory) => {
+		if (skipWatson) {
+			const assistantId = assistantDefault;
+
+			let response = {
+				ok: true,
+				response: C.CONFIG.service.chat.introduction,
+				confidence: 1,
+				chatSessionId: clientChatSessionId,
+				assistantId,
+			};
+
+			processActions(req, res, msg, response, clientChatSessionId, () => {
+				recordHistory(req, msg, response, () => {
+					res.json(response);
+				});
+			});
+
+
+			return;
+		}
 
 		// First, create an array of Promises to do the work of sending the messages to the Watson Assistant API.
 
@@ -450,7 +470,7 @@ module.exports = function (C, apiRoutes) {
 					// Some error in contacting the assistant occurred.
 					// This is most likely due to the assistant session timing out or becoming invalid.
 					// So instead, default back to unlocked state, and if errors still occur, it will report it to client.
-					sendMessageAssistantUnlocked(req, res, msg, C.CONFIG.service.chat.assistants, clientChatSessionId, false, recordHistory);
+					sendMessageAssistantUnlocked(req, res, msg, C.CONFIG.service.chat.assistants, clientChatSessionId, false, false, recordHistory);
 				} else {
 
 					L.verbose(`Assistant confidence threshold: ${assistantConfidenceThreshold}`);
@@ -463,7 +483,7 @@ module.exports = function (C, apiRoutes) {
 
 						deleteSession(apiSession.assistant_id, apiSession.session_id, () => {
 
-							sendMessageAssistantUnlocked(req, res, msg, C.CONFIG.service.chat.assistants, clientChatSessionId, false, recordHistory);
+							sendMessageAssistantUnlocked(req, res, msg, C.CONFIG.service.chat.assistants, clientChatSessionId, false, false, recordHistory);
 						});
 					} else {
 
@@ -539,6 +559,12 @@ module.exports = function (C, apiRoutes) {
 			const skipLock = req.body.skipLock || false;
 			const apiSession = req.body.apiSession || undefined;
 
+			let skipWatson = false;
+
+			if (msg === 'introduction') {
+				skipWatson = true;
+			}
+
 			if (skipLock) {
 				L.verbose('Client requested to skip assistant lock.');
 			}
@@ -554,7 +580,7 @@ module.exports = function (C, apiRoutes) {
 			} else {
 
 				// Send message to all assistants and if allowed, lock into an assistant if the threshold confidence for lock is met.
-				sendMessageAssistantUnlocked(req, res, msg, C.CONFIG.service.chat.assistants, nodeUserSessionId, skipLock, recordAnswerHistory);
+				sendMessageAssistantUnlocked(req, res, msg, C.CONFIG.service.chat.assistants, nodeUserSessionId, skipLock, skipWatson, recordAnswerHistory);
 			}
 		}
 	});

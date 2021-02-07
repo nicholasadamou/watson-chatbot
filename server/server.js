@@ -51,7 +51,6 @@ const C = {
 
 	PORT: undefined,
 	HOST: undefined,
-	PROTOCOL: 'http',
 
 	// If "enable_debug" is set to 'true', then additional REST APIs are available to query
 	// to get more information (should NOT be used in production).
@@ -67,7 +66,7 @@ const C = {
 
 C.ENABLE_DEBUG = process.env.DEBUG && process.env.DEBUG.toUpperCase() === 'TRUE';
 C.BANNER = process.env.BANNER ? process.env.BANNER : '';
-C.HOST = process.env.HOST ? process.env.HOST : 'localhost';
+C.HOST = process.env.HOST ? process.env.HOST : 'http://localhost';
 C.PORT = process.env.PORT ? process.env.PORT : 6001;
 const CONFIG_API_KEY = 'api';
 
@@ -322,11 +321,7 @@ app.listen(C.PORT, () => {
 
 	if (C.LOCAL) {
 		L.verbose(`Application App Environment: ${JSON.stringify(CONFIG, null, 2)}`);
-		if (C.HOST.includes("http") || C.HOST.includes("https")) {
-			L.info(`To view your app, open this link in your browser: ${C.HOST}:${C.PORT}/chatbot`);
-		} else {
-			L.info(`To view your app, open this link in your browser: ${C.PROTOCOL}://${C.HOST}:${C.PORT}/chatbot`);
-		}
+		L.info(`To view your app, open this link in your browser: ${C.HOST}:${C.PORT}/chatbot`);
 	} else {
 		L.info(`Running in Cloud on Port='${C.PORT}', Env='${ENV}'.`);
 	}

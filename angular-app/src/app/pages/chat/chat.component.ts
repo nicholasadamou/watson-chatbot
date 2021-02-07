@@ -67,7 +67,6 @@ export class ChatComponent implements OnInit {
           this.chatService,
           () => {
             this.configService.saveConfig();
-            this.showStartMessages();
           }
         );
       } else {

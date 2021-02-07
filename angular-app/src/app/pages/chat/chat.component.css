@@ -134,8 +134,7 @@
 
 .chat-user-message-pos-container {
   height: 100%;
-  margin: 0;
-  margin-left: auto;
+  margin: 0 0 0 auto;
 }
 
 .chat-user-message-bubble {
@@ -159,7 +158,7 @@
 
   .chat-user-message-normal-color {
     background-color: var(--chatbot-messages-user) !important;
-    color: var(--text-color) !important;
+    color: var(--color-light) !important;
   }
 
   .chat-message-comment-color {

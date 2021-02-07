@@ -153,4 +153,3 @@ const userInfo = {};
 There are various commands available to the user.
 
 1. `help`: Will list out the assistants that are there to help you as well as launch the commands found within the [server/config.js](server/config.js) under `services.chat.startStatements`.
-2. `assistants`, `chatbot`, `assistants`, `chatbots`: Will list out the assistants that are there to help you.

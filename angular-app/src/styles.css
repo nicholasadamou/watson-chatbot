@@ -6,22 +6,14 @@
   :root {
     --color-mode: 'dark';
   }
-
-  :root:not([data-user-color-scheme]) {
-    --text-color: var(--color-light) !important;
-    --chatbot-icon: var(--color-matte-dark) !important;
-    --chatbot-header: var(--color-chatbot-header-dark) !important;
-    --chatbot-messages: var(--color-chatbot-messages-dark) !important;
-    --chatbot-messages-user: var(--color-chatbot-user-messages-dark) !important;
-  }
 }
 
 [data-user-color-scheme='dark'] {
-    --text-color: var(--color-light) !important;
+    --text-color: var(--color-dark) !important;
     --chatbot-icon: var(--color-matte-dark) !important;
     --chatbot-header: var(--color-chatbot-header-dark) !important;
-    --chatbot-messages: var(--color-chatbot-messages-dark) !important;
-    --chatbot-messages-user: var(--color-chatbot-user-messages-dark) !important;
+    --chatbot-messages: var(--color-chatbot-messages) !important;
+    --chatbot-messages-user: var(--color-dark) !important;
 }
 
 app-root {

@@ -146,7 +146,7 @@ export class ChatService {
     suppressConfidence: boolean = false,
     skipLock: boolean = false,
     skipHistory: boolean = false,
-    makeSubmsgsLinkable: boolean = false
+    makeSubmsgsLinkable: boolean = true
   ): void {
     if (this.pending) {
       callback(false);

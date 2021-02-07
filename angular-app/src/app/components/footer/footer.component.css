@@ -7,3 +7,31 @@
 .chat-field {
   width: 100%;
 }
+
+.mat-input-element {
+  caret-color: var(--chatbot-messages-user) !important;
+}
+
+#askButton {
+  background-color: var(--chatbot-messages-user);
+}
+
+.mat-form-field.mat-focused #mat-form-field-label-1 {
+  color: var(--chatbot-messages-user);
+}
+
+.mat-form-field-infix {
+  background-color: #f2f4f8;
+}
+
+.mat-form-field.mat-form-field-invalid.mat-focused .mat-form-field-ripple, .mat-form-field.mat-form-field-invalid .mat-form-field-ripple.mat-accent {
+  background-color: #f44336;
+}
+
+.mat-flat-button.mat-primary, .mat-raised-button.mat-primary, .mat-fab.mat-primary, .mat-mini-fab.mat-primary {
+  background-color: var(--chatbot-messages-user);
+}
+
+.mat-form-field.mat-focused .mat-form-field-ripple {
+  background-color: var(--chatbot-messages-user);
+}
