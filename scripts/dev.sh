@@ -1,9 +1,7 @@
 #!/bin/bash
 
-cd angular-app && \
-	npx yarn install && \
-	npx yarn build
+npx yarn install-dependencies
 
-cd .. && \
-	npx yarn install && \
-	nodemon server/server.js
+npx yarn --cwd angular-app build
+
+nodemon server/server.js
