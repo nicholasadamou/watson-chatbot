@@ -123,7 +123,12 @@ export class ChatComponent implements OnInit {
   }
 
   getMessageTimestamp(msg: Message) {
-    return new Date(msg.timestamp).toLocaleString("en-US");
+    return new Date(msg.timestamp).toLocaleString("en-US", {
+      month: "short",
+      day: "numeric",
+      hour: "numeric",
+      minute: "numeric"
+    });
   }
 
   openImageDialog(event: any, src: string, message?: string): void {
