@@ -70,12 +70,10 @@ export class ChatComponent implements OnInit {
           () => {
             // environment.config.showIntroduction = false;
             this.configService.saveConfig();
-            this.showStartMessages();
           }
         );
       } else {
         this.showStartMessages();
-
       }
     }
 
@@ -302,5 +300,9 @@ export class ChatComponent implements OnInit {
 
   isVideo(submsg: MessagePartSubMessage): boolean {
     return submsg.type == MessagePartSubMessageType.VIDEO;
+  }
+
+  isImage(submsg: MessagePartSubMessage): boolean {
+    return submsg.type == MessagePartSubMessageType.IMAGE;
   }
 }

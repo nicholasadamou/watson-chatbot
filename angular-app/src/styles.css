@@ -1,66 +1,19 @@
 /* You can add global styles to this file, and also import other style files */
 
 /*@import "~@angular/material/prebuilt-themes/indigo-pink.css";*/
+
 @media (prefers-color-scheme: dark) {
   :root {
     --color-mode: 'dark';
   }
-
-  :root:not([data-user-color-scheme]) {
-    --background: var(--color-dark) !important;
-    --table-background: var(--color-matte-dark) !important;
-    --text-color: var(--color-dark) !important;
-    --button-icon: var(--icon-sun) !important;
-    --button-icon-filter: var(--icon-sun-filter) !important;
-    --button-background: var(--color-light) !important;
-    --button-color: var(--color-dark) !important;
-    --border-color: var(--color-light-alpha) !important;
-    --dropdown-color: var(--color-matte-dark) !important;
-    --dropdown-text-color: var(--color-light) !important;
-    --modal-content-background: var(--table-background) !important;
-    --filter-brightness: var(--brightness) !important;
-    --product-data-brightness: var(--light-brightness) !important;
-    --select-file: var(--color-whitesmoke) !important;
-    --button-disabled: var(--color-dark-disabled) !important;
-    --box-color: var(--box-dark-color) !important;
-    --success-color: var(--success-dark-color) !important;
-    --opposite: var(--color-light) !important;
-    --opposite2: var(--color-dark) !important;
-    --hover-color-btn: var(--color-hover-2) !important;
-    --tooltip-content-brightness: var(--super-brightness) !important;
-    --chatbot-icon: var(--table-background) !important;
-    --chatbot-header: var(--color-chatbot-header-dark) !important;
-    --chatbot-messages: var(--color-chatbot-messages) !important;
-    --chatbot-messages-user: var(--color-chatbot-user-messages) !important;
-  }
 }
 
 [data-user-color-scheme='dark'] {
-    --background: var(--color-dark) !important;
-    --table-background: var(--color-matte-dark) !important;
-    --text-color: var(--color-dark) !important;
-    --button-icon: var(--icon-sun) !important;
-    --button-icon-filter: var(--icon-sun-filter) !important;
-    --button-background: var(--color-light) !important;
-    --button-color: var(--color-dark) !important;
-    --border-color: var(--color-light-alpha) !important;
-    --dropdown-color: var(--color-matte-dark) !important;
-    --dropdown-text-color: var(--color-light) !important;
-    --modal-content-background: var(--table-background) !important;
-    --filter-brightness: var(--brightness) !important;
-    --product-data-brightness: var(--light-brightness) !important;
-    --select-file: var(--color-whitesmoke) !important;
-    --button-disabled: var(--color-dark-disabled) !important;
-    --box-color: var(--box-dark-color) !important;
-    --success-color: var(--success-dark-color) !important;
-    --opposite: var(--color-light) !important;
-    --opposite2: var(--color-dark) !important;
-    --hover-color-btn: var(--color-hover-2) !important;
-    --tooltip-content-brightness: var(--super-brightness) !important;
-    --chatbot-icon: var(--table-background) !important;
-    --chatbot-header: var(--color-chatbot-header-dark) !important;
-    --chatbot-messages: var(--color-chatbot-messages) !important;
-    --chatbot-messages-user: var(--color-chatbot-user-messages-dark) !important;
+  --text-color: var(--color-dark) !important;
+  --chatbot-icon: var(--color-matte-dark) !important;
+  --chatbot-header: var(--color-chatbot-header-dark) !important;
+  --chatbot-messages: var(--color-chatbot-messages) !important;
+  --chatbot-messages-user: var(--color-dark) !important;
 }
 
 app-root {

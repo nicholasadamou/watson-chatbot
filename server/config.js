@@ -35,7 +35,7 @@ module.exports = (C) => {
 				confidence: 0.3,
 				//https://cloud.ibm.com/docs/assistant?topic=assistant-api-migration&programming_language=javascript
 				version: '2020-04-01',
-				url: 'https://gateway.watsonplatform.net/assistant/api',
+				url: 'https://api.us-south.assistant.watson.cloud.ibm.com',
 				commands: [
 					'invoke-command.js',
 					'child-messages.js',
@@ -44,10 +44,16 @@ module.exports = (C) => {
 				],
 				messageHistory: 100,
 				introStatements: [
-					'Hello User!'
+					'introduction'
 				],
 				startStatements: [
-					'Who are you?'
+					'introduction'
+				],
+				introduction: [
+					{
+						"response_type": "TEXT",
+						"text": "Hello! I am the <b>Watson</b> chatbot assistant. You can ask me any sort of questions."
+					}
 				],
 				helpHtml: '<p></p>',
 				errorMessage: 'Sorry, I am having difficulty connecting to Watson Assistant service on IBM Cloud. Please try again later.',

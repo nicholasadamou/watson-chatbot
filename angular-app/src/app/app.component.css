@@ -25,3 +25,20 @@
 .page-font-size-small {
   font-size: 0.7em;
 }
+
+header {
+  position: fixed;
+  top: 0;
+
+  width: 100%;
+
+  z-index: 2;
+}
+
+#chat {
+  margin: 60px 0 0;
+
+  padding-bottom: 60px;
+
+  position: relative;
+}

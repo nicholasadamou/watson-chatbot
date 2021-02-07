@@ -148,7 +148,7 @@
                         >
                           <tr *ngIf="k == 0">
                             <td
-                              *ngIf="!isVideo(submsg)"
+                              *ngIf="!isVideo(submsg) && !isImage(submsg)"
                               (click)="part.expanded = !part.expanded"
                               class="chat-icon-mini chat-icon-mini-collapsible"
                             >

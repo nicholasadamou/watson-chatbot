@@ -5,12 +5,12 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "node server/server.js",
-    "dev": "scripts/start.sh",
-    "mon": "nodemon server/server.js",
-    "install-dependencies": "yarn install && cd angular-app && yarn install",
-    "clean": "rm -rf node_modules package-lock.json yarn.lock && cd angular-app && rm -rf node_modules package-lock.json yarn.lock",
-    "docker": "scripts/docker.sh"
+	"start": "node server/server.js",
+	"dev": "scripts/dev.sh",
+	"docker": "scripts/docker.sh",
+	"mon": "nodemon server/server.js",
+	"install-dependencies": "yarn install && yarn --cwd angular-app install",
+	"clean": "rm -rf node_modules package-lock.json yarn.lock && cd angular-app && rm -rf node_modules package-lock.json yarn.lock"
   },
   "repository": {
     "type": "git",
