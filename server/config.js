@@ -52,7 +52,7 @@ module.exports = (C) => {
 				introduction: [
 					{
 						"response_type": "TEXT",
-						"text": "Hello! I am the <b>Watson</b> chatbot assistant."
+						"text": "Hello! I am the <b>Watson</b> chatbot assistant. You can ask me any sort of questions."
 					}
 				],
 				helpHtml: '<p></p>',
