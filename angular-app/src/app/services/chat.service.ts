@@ -193,13 +193,9 @@ export class ChatService {
         })
         .subscribe(
           (resp) => {
-            //const headers: HttpHeaders = resp.headers;
-
             const data = resp.body ? resp.body : {};
 
             const response: any[] = data.processedResponse;
-
-            //console.log('response', data.processedResponse);
 
             const confidence: number = data.confidence;
 
@@ -370,7 +366,7 @@ export class ChatService {
               }
             }
 
-            this.answerEvent.next();
+            this.notifyAnswer();
             this.pending = false;
             callback(true);
           },
@@ -379,7 +375,7 @@ export class ChatService {
               MESSAGE_UNABLE_TO_COMMUNICATE(this.CHAT.errorMessage),
               skipHistory
             );
-            this.answerEvent.next();
+            this.notifyAnswer();
             this.pending = false;
             callback(false);
           }
@@ -428,6 +424,8 @@ export class ChatService {
   }
 
   getMessages(): Message[] {
+    this.notifyAnswer();
+
     return this.messages;
   }
 
