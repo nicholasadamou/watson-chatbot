@@ -45,7 +45,7 @@ export class AppComponent implements OnInit {
 
     // Prevent the initial phantom call that Chrome sends.
     const e: any = message;
-    if (e.data && e.data.data == undefined && e.data.type == "webpackOk") {
+    if (e.data && e.data.data === undefined && e.data.type == "webpackOk") {
       return;
     }
 
@@ -92,7 +92,7 @@ export class AppComponent implements OnInit {
           false,
           true,
           true,
-          params["linkable"] != undefined
+          params["linkable"] !== undefined
         );
       }
     });
@@ -137,7 +137,7 @@ export class AppComponent implements OnInit {
 
   doLogin(): void {
     this.authService.login();
-    this.chatService.notifyAnswer();
+    this.notifyService.notifyAnswer();
   }
 
   setTitle(newTitle: string) {

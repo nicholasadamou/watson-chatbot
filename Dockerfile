@@ -47,11 +47,10 @@ COPY --chown=node server /opt/app/server
 COPY --chown=node ./package.json /opt/app/package.json
 COPY --chown=node ./angular-app/package.json /opt/app/angular-app/package.json
 
-RUN yarn install
-RUN yarn --cwd angular-app install
+RUN yarn install-dependencies
 
 WORKDIR /opt/app/angular-app
-RUN node_modules/@angular/cli/bin/ng build --prod
+RUN node_modules/@angular/cli/bin/ng build
 RUN cp -a dist/angular-app/. /opt/app/server/ui/
 
 # We copy the rest of the application, this will override the

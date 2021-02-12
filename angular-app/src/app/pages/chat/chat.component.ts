@@ -60,7 +60,6 @@ export class ChatComponent implements OnInit {
           this.chatService,
           () => {
             this.configService.saveConfig();
-            this.chatService.notifyAnswer();
           }
         );
       } else {
@@ -95,7 +94,7 @@ export class ChatComponent implements OnInit {
                   true,
                   true,
                   true,
-                  i == 0
+                  i === 0
                 );
               }, 100);
             });
@@ -112,7 +111,11 @@ export class ChatComponent implements OnInit {
   }
 
   applySetting = () => {
-    let colorScheme = localStorage.getItem('user-color-scheme') || this.DEFAULT_SCHEME;
+    let colorScheme = localStorage.getItem('user-color-scheme');
+
+    if (colorScheme === undefined) {
+      colorScheme = this.DEFAULT_SCHEME;
+    }
 
     if (colorScheme) {
       document.documentElement.setAttribute('data-user-color-scheme', colorScheme);
@@ -157,9 +160,7 @@ export class ChatComponent implements OnInit {
       text = text.substring(0, text.length - 1);
     }
 
-    this.chatService.askQuestion(text, () => {
-      this.chatService.notifyAnswer();
-    });
+    this.chatService.askQuestion(text, () => {});
   }
 
   isAssistantDisabled(message: Message): boolean {
@@ -209,10 +210,10 @@ export class ChatComponent implements OnInit {
   }
 
   isVideo(submsg: MessagePartSubMessage): boolean {
-    return submsg.type == MessagePartSubMessageType.VIDEO;
+    return submsg.type === MessagePartSubMessageType.VIDEO;
   }
 
   isImage(submsg: MessagePartSubMessage): boolean {
-    return submsg.type == MessagePartSubMessageType.IMAGE;
+    return submsg.type === MessagePartSubMessageType.IMAGE;
   }
 }

@@ -6,13 +6,26 @@ import * as Rx from "rxjs";
 })
 export class NotifyService {
   answerEvent = new Rx.Subject();
+  sendEvent = new Rx.Subject();
 
-  subscribeToSend(callback: any): void {
+  subscribeToAnswer(callback: any): void {
     this.answerEvent.subscribe(callback);
   }
 
+  subscribeToSend(callback: any): void {
+    this.sendEvent.subscribe(callback);
+  }
+
   send(value: string): void {
-    this.answerEvent.next(value);
+    this.sendEvent.next(value);
+  }
+
+  notifyAnswer(): void {
+    this.answerEvent.next();
+  }
+
+  notifySend(): void {
+    this.sendEvent.next();
   }
 
   constructor() {}

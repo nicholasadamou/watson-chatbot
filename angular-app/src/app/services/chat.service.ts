@@ -1,7 +1,7 @@
-import { Injectable } from "@angular/core";
-import { HttpClient /*, HttpHeaders*/ } from "@angular/common/http";
-import { AuthenticationService } from "../services/authentication.service";
-import { NotifyService } from "../services/notify.service";
+import { Injectable } from '@angular/core';
+import { HttpClient /*, HttpHeaders*/ } from '@angular/common/http';
+import { AuthenticationService } from '../services/authentication.service';
+import { NotifyService } from '../services/notify.service';
 import {
   MessagePartSubMessage,
   MessagePartSubMessageType,
@@ -11,29 +11,27 @@ import {
   Message,
   MESSAGE_DO_NOT_UNDERSTAND,
   MESSAGE_UNABLE_TO_COMMUNICATE,
-} from "../app.constants";
-import { AppConstants } from "../app.constants";
-import { Utils } from "../utils";
-import { environment } from "../../environments/environment";
-import * as Rx from "rxjs";
+} from '../app.constants';
+import { AppConstants } from '../app.constants';
+import { Utils } from '../utils';
+import { environment } from '../../environments/environment';
+import * as Rx from 'rxjs';
 
 @Injectable({
-  providedIn: "root",
+  providedIn: 'root',
 })
 export class ChatService {
   CONFIG: any = environment.config;
-  CHAT: any = environment.server.api["chat"];
+  CHAT: any = environment.server.api['chat'];
 
-  pending: boolean = false;
+  pending = false;
   messages: Message[] = [];
-
-  answerEvent = new Rx.Subject();
 
   apiSession: any = undefined;
 
   history: any = [];
-  historySlot: number = 0;
-  historyShowSlot: number = 0;
+  historySlot = 0;
+  historyShowSlot = 0;
 
   constructor(
     private http: HttpClient,
@@ -42,13 +40,13 @@ export class ChatService {
   ) {}
 
   startNewHistory(): void {
-    if (!this.authService.isAuthenticated()) return;
+    if (!this.authService.isAuthenticated()) { return; }
 
     if (!localStorage.getItem(AppConstants.HISTORY)) {
       localStorage.setItem(AppConstants.HISTORY, JSON.stringify([]));
     }
 
-    let historySlots = JSON.parse(localStorage.getItem(AppConstants.HISTORY));
+    const historySlots = JSON.parse(localStorage.getItem(AppConstants.HISTORY));
 
     // Special case.
     // Remove any history with only one message.
@@ -94,7 +92,7 @@ export class ChatService {
   }
 
   showPreviousHistory(): void {
-    if (!this.authService.isAuthenticated()) return;
+    if (!this.authService.isAuthenticated()) { return; }
 
     const historySlots = JSON.parse(localStorage.getItem(AppConstants.HISTORY));
     if (this.historyShowSlot >= 0) {
@@ -110,20 +108,12 @@ export class ChatService {
     return (
       this.authService.isAuthenticated() &&
       this.historyShowSlot >= 0 &&
-      this.historySlot != this.historyShowSlot
+      this.historySlot !== this.historyShowSlot
     );
   }
 
   clearMessages(): void {
     this.messages = [];
-  }
-
-  subscribeToAnswer(callback: any): void {
-    this.answerEvent.subscribe(callback);
-  }
-
-  notifyAnswer(): void {
-    this.answerEvent.next();
   }
 
   setQuestionPending(val: boolean): void {
@@ -155,7 +145,7 @@ export class ChatService {
         this.pending = true;
       }
 
-      if (question === "[Object object]" || typeof question !== "string") {
+      if (question === '[Object object]' || typeof question !== 'string') {
         return;
       }
 
@@ -187,9 +177,11 @@ export class ChatService {
         msg.skipLock = true;
       }
 
+      this.notify.notifySend();
+
       this.http
         .post<any>(`${Utils.getServerUrl()}/api/chat/message`, msg, {
-          observe: "response",
+          observe: 'response',
         })
         .subscribe(
           (resp) => {
@@ -222,15 +214,15 @@ export class ChatService {
 
               for (let i = 0; i < response.length; i++) {
                 if (response[i].response_type) {
-                  if (response[i].response_type === "TEXT") {
-                    let embeddedVideo = undefined;
+                  if (response[i].response_type === 'TEXT') {
+                    let embeddedVideo;
 
                     if (
                       response[i].message &&
-                      response[i].message.startsWith("VIDEO(")
+                      response[i].message.startsWith('VIDEO(')
                     ) {
-                      const ij = response[i].message.indexOf(")");
-                      if (ij != -1) {
+                      const ij = response[i].message.indexOf(')');
+                      if (ij !== -1) {
                         embeddedVideo = response[i].message
                           .substring(6, ij)
                           .trim();
@@ -245,11 +237,11 @@ export class ChatService {
                       message: response[i].message,
                     };
                     if (response[i].type) {
-                      if (response[i].type === "HIGHLIGHT") {
+                      if (response[i].type === 'HIGHLIGHT') {
                         msgPart.type = MessagePartType.HIGHLIGHT;
-                      } else if (response[i].type === "ERROR") {
+                      } else if (response[i].type === 'ERROR') {
                         msgPart.type = MessagePartType.ERROR;
-                      } else if (response[i].type === "ALERT") {
+                      } else if (response[i].type === 'ALERT') {
                         msgPart.type = MessagePartType.ALERT;
                       }
                     }
@@ -301,23 +293,23 @@ export class ChatService {
                     } else {
                       supressMisunderstoodMessage = true;
                     }
-                  } else if (response[i].response_type === "IMAGE") {
+                  } else if (response[i].response_type === 'IMAGE') {
                     const msgPart: MessagePart = {
                       type: MessagePartType.NORMAL,
-                      message: response[i].title ? response[i].title : "",
+                      message: response[i].title ? response[i].title : '',
                       submessages: [
                         {
                           type: MessagePartSubMessageType.IMAGE,
                           message: response[i].description
                             ? response[i].description
-                            : "",
+                            : '',
                           image: response[i].source,
                         },
                       ],
                     };
 
                     msgParts.push(msgPart);
-                  } else if (response[i].response_type === "OPTION") {
+                  } else if (response[i].response_type === 'OPTION') {
                     const msgPartSubMessages: MessagePartSubMessage[] = [];
 
                     if (response[i].description) {
@@ -338,7 +330,7 @@ export class ChatService {
 
                     const msgPart: MessagePart = {
                       type: MessagePartType.NORMAL,
-                      message: response[i].title ? response[i].title : "",
+                      message: response[i].title ? response[i].title : '',
                       submessages: msgPartSubMessages,
                       expanded: true,
                     };
@@ -366,7 +358,7 @@ export class ChatService {
               }
             }
 
-            this.notifyAnswer();
+            this.notify.notifyAnswer();
             this.pending = false;
             callback(true);
           },
@@ -375,7 +367,7 @@ export class ChatService {
               MESSAGE_UNABLE_TO_COMMUNICATE(this.CHAT.errorMessage),
               skipHistory
             );
-            this.notifyAnswer();
+            this.notify.notifyAnswer();
             this.pending = false;
             callback(false);
           }
@@ -390,7 +382,7 @@ export class ChatService {
     }
 
     // Need to make sure the assistant details are set (or use default if not.)
-    if (message.type == MessageType.WATSON) {
+    if (message.type === MessageType.WATSON) {
       if (!message.assistantId) {
         message.assistantId = this.CHAT.assistantDefault;
       }
@@ -424,7 +416,7 @@ export class ChatService {
   }
 
   getMessages(): Message[] {
-    this.notifyAnswer();
+    this.notify.notifyAnswer();
 
     return this.messages;
   }

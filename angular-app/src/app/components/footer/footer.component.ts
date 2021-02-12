@@ -61,7 +61,7 @@ export class FooterComponent implements OnInit {
               },
               true
             );
-            this.chatService.notifyAnswer();
+            this.notifyService.notifyAnswer();
             this.sayReminder = false;
           }
         }
@@ -77,7 +77,7 @@ export class FooterComponent implements OnInit {
       question: ['', [Validators.minLength(2)]],
     });
 
-    this.chatService.subscribeToAnswer(() => {
+    this.notifyService.subscribeToAnswer(() => {
       this.loading = false;
 
       this.scrollToBottom();
@@ -104,16 +104,10 @@ export class FooterComponent implements OnInit {
     this.f.question.setValue('');
 
     if (this.env.state.embeddedMode) {
-      this.chatService.askQuestion(msg, () => {
-        this.scrollToBottom();
-      });
+      this.chatService.askQuestion(msg, () => { });
     } else if (!this.processCommands(msg)) {
-      this.chatService.askQuestion(msg, () => {
-        this.scrollToBottom();
-      });
+      this.chatService.askQuestion(msg, () => {});
     }
-
-    this.chatService.notifyAnswer();
   }
 
   processCommands(msg: string): boolean {
@@ -125,9 +119,7 @@ export class FooterComponent implements OnInit {
       if (this.CHAT.startStatements && this.CHAT.startStatements.length > 0) {
         this.chatService.askQuestion(
           this.CHAT.startStatements[0],
-          () => {
-            this.scrollToBottom();
-          },
+          () => {},
           true,
           true,
           true,
